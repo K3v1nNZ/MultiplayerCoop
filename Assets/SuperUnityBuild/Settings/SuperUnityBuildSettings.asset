@@ -1,0 +1,213 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6168863824387767445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dc439ce9d1bfb34a821f7d6fabc4fef, type: 3}
+  m_Name: Linux
+  m_EditorClassIdentifier: 
+  enabled: 1
+  distributionList:
+    distributions: []
+  architectures:
+  - target: 24
+    name: Linux x64
+    enabled: 1
+    binaryNameFormat: '{0}.x86_64'
+  variants: []
+  scriptingBackends:
+  - scriptingImplementation: 0
+    name: Mono
+    enabled: 0
+  - scriptingImplementation: 1
+    name: IL2CPP
+    enabled: 1
+  platformName: Linux
+  targetGroup: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d5886119a5c7b34d8872ab527ca3e1b, type: 3}
+  m_Name: SuperUnityBuildSettings
+  m_EditorClassIdentifier: 
+  _basicSettings:
+    baseBuildFolder: F:\HitmenGameBuilds
+    buildPath: $VERSION/$RELEASE_TYPE/$PLATFORM/
+    openFolderPostBuild: 1
+    constantsFileLocation: Assets\SuperUnityBuild
+  _productParameters:
+    buildCounter: 1
+    buildVersion: 
+    versionTemplate: 0.0.1.$BUILD
+    autoGenerate: 1
+    syncWithPlayerSettings: 0
+  _releaseTypeList:
+    releaseTypes:
+    - typeName: Debug
+      bundleIdentifier: com.K3v1nNZ.MultiplayerCoop
+      companyName: K3v1nNZ
+      productName: MultiplayerCoop
+      syncAppNameWithProduct: 1
+      appBuildName: MultiplayerCoop
+      buildOptions: 1
+      customDefines: 
+      sceneList:
+        releaseScenes:
+        - fileGUID: 9fc0d4010bbf28b4594072e72b8655ab
+          sceneActive: 1
+        - fileGUID: b221fa6f4ce0ba24eb2e48746ff2065c
+          sceneActive: 1
+    - typeName: Shipping
+      bundleIdentifier: com.K3v1nNZ.MultiplayerCoop
+      companyName: K3v1nNZ
+      productName: MultiplayerCoop
+      syncAppNameWithProduct: 1
+      appBuildName: MultiplayerCoop
+      buildOptions: 0
+      customDefines: 
+      sceneList:
+        releaseScenes:
+        - fileGUID: 9fc0d4010bbf28b4594072e72b8655ab
+          sceneActive: 1
+        - fileGUID: b221fa6f4ce0ba24eb2e48746ff2065c
+          sceneActive: 1
+  _platformList:
+    platforms:
+    - {fileID: 3514006072511536831}
+    - {fileID: -6168863824387767445}
+  _projectConfigurations:
+    configSet:
+      _Buckets: 0d00000009000000ffffffffffffffff04000000020000000a00000006000000ffffffffffffffff08000000ffffffff0b00000000000000ffffffff0c000000ffffffff
+      _HashCodes: c8c6984b0b193525b1c74d60e241c0581716b1365c441e260d4e9934e3c2b56e0a15d515bcc946780b2a667b92f27d6fbf5fa737e030f65e000000000000000000000000
+      _Next: ffffffffffffffffffffffffffffffffffffffff0100000005000000ffffffff03000000ffffffffffffffffffffffff07000000ffffffff000000000000000000000000
+      _Count: 14
+      _Version: 14
+      _FreeList: -1
+      _FreeCount: 0
+      _Keys:
+      - Debug/PC/Windows x64 (App)/IL2CPP
+      - Debug/PC/Windows x64 (App)
+      - Debug/PC
+      - Debug/Linux/Linux x64/IL2CPP
+      - Debug/Linux/Linux x64
+      - Debug/Linux
+      - Debug
+      - Shipping/PC/Windows x64 (App)/IL2CPP
+      - Shipping/PC/Windows x64 (App)
+      - Shipping/PC
+      - Shipping/Linux/Linux x64/IL2CPP
+      - Shipping/Linux/Linux x64
+      - Shipping/Linux
+      - Shipping
+      - 
+      - 
+      - 
+      _Values:
+      - enabled: 1
+        childKeys: []
+      - enabled: 1
+        childKeys:
+        - Debug/PC/Windows x64 (App)/IL2CPP
+      - enabled: 1
+        childKeys:
+        - Debug/PC/Windows x64 (App)
+      - enabled: 0
+        childKeys: []
+      - enabled: 1
+        childKeys:
+        - Debug/Linux/Linux x64/IL2CPP
+      - enabled: 1
+        childKeys:
+        - Debug/Linux/Linux x64
+      - enabled: 1
+        childKeys:
+        - Debug/PC
+        - Debug/Linux
+      - enabled: 0
+        childKeys: []
+      - enabled: 1
+        childKeys:
+        - Shipping/PC/Windows x64 (App)/IL2CPP
+      - enabled: 1
+        childKeys:
+        - Shipping/PC/Windows x64 (App)
+      - enabled: 0
+        childKeys: []
+      - enabled: 1
+        childKeys:
+        - Shipping/Linux/Linux x64/IL2CPP
+      - enabled: 1
+        childKeys:
+        - Shipping/Linux/Linux x64
+      - enabled: 1
+        childKeys:
+        - Shipping/PC
+        - Shipping/Linux
+      - enabled: 1
+        childKeys: []
+      - enabled: 1
+        childKeys: []
+      - enabled: 1
+        childKeys: []
+    showViewOptions: 0
+    showConfigs: 0
+    showBuildInfo: 0
+    hideDisabled: 0
+    treeView: 0
+    selectedKeyChain: 
+  _preBuildActions:
+    buildActions: []
+  _postBuildActions:
+    buildActions: []
+--- !u!114 &3514006072511536831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2786f6b2301a94f4288672ff5305244c, type: 3}
+  m_Name: PC
+  m_EditorClassIdentifier: 
+  enabled: 1
+  distributionList:
+    distributions: []
+  architectures:
+  - target: 5
+    name: Windows x86
+    enabled: 0
+    binaryNameFormat: '{0}.exe'
+  - target: 19
+    name: Windows x64
+    enabled: 1
+    binaryNameFormat: '{0}.exe'
+  variants:
+  - variantName: Build Output
+    selectedIndex: 0
+    values:
+    - App
+    - Visual Studio Solution
+    isFlag: 0
+  scriptingBackends:
+  - scriptingImplementation: 0
+    name: Mono
+    enabled: 0
+  - scriptingImplementation: 1
+    name: IL2CPP
+    enabled: 1
+  platformName: PC
+  targetGroup: 1
