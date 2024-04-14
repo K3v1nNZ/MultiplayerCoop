@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using Game.Networking;
@@ -14,6 +13,10 @@ namespace Game.MenuUI
     {
         [SerializeField] private CanvasGroup fadeCanvasGroup;
         [SerializeField] private CanvasGroup lobbyInfoCanvasGroup;
+        [SerializeField] private GameObject[] lobbySettings;
+        [SerializeField] private TMP_Dropdown mapDropdown;
+        [SerializeField] private TMP_Text lobbyVisibilityText;
+        [SerializeField] private TMP_Text lobbyMapText;
         [SerializeField] private Transform[] playerStands;
         [SerializeField] private GameObject[] playerStandsNameCanvas;
         [SerializeField] private TMP_Text[] playerStandsNameText;
@@ -28,36 +31,80 @@ namespace Game.MenuUI
         private void Start()
         {
             fadeCanvasGroup.DOFade(0f, 0.5f).SetEase(Ease.Linear);
+            if (LobbyManager.Instance.CurrentLobbyId.IsOwnedBy(SteamClient.SteamId))
+            {
+                lobbySettings[0].SetActive(true);
+                lobbySettings[1].SetActive(false);
+            }
+            else
+            {
+                lobbySettings[0].SetActive(false);
+                lobbySettings[1].SetActive(true);
+            }
             RefreshPlayerStands();
+            AddMapsToDropdown();
+            SetLobbyInfo();
         }
         
         private void OnEnable()
         {
             LobbyManager.GameLobbyMemberJoin += OnLobbyMemberJoin;
             LobbyManager.GameLobbyMemberLeave += OnLobbyMemberLeave;
+            LobbyManager.GameLobbySettingsChanged += GameLobbySettingChanged;
         }
         
         private void OnDisable()
         {
             LobbyManager.GameLobbyMemberJoin -= OnLobbyMemberJoin;
             LobbyManager.GameLobbyMemberLeave -= OnLobbyMemberLeave;
+            LobbyManager.GameLobbySettingsChanged -= GameLobbySettingChanged;
         }
 
         private void RefreshPlayerStands()
         {
-            IEnumerable<Friend> lobbyMembers = LobbyManager.Instance.CurrentLobbyId.Members.ToArray();
-            
-            for (int i = 1; i < lobbyMembers.Count(); i++)
+            foreach (Transform playerStand in playerStands)
             {
-                if (lobbyMembers.ElementAt(i).Id == SteamClient.SteamId)
+                foreach (Transform child in playerStand)
                 {
-                    lobbyMembers = lobbyMembers.Take(i).Concat(lobbyMembers.Skip(i + 1));
-                    break;
+                    Destroy(child.gameObject);
                 }
-                
+            }
+            foreach (GameObject playerStandNameCanvas in playerStandsNameCanvas)
+            {
+                playerStandNameCanvas.SetActive(false);
+            }
+            
+            Friend[] lobbyMembers = LobbyManager.Instance.CurrentLobbyId.Members.ToArray();
+            Friend self = new(SteamClient.SteamId);
+            if (lobbyMembers.Contains(self))
+            {
+                lobbyMembers = lobbyMembers.Where(friend => friend.Id != self.Id).ToArray();
+            }
+            
+            for (int i = 0; i < lobbyMembers.Count(); i++)
+            {
+                Instantiate(playerStandPrefab, playerStands[i]);
                 playerStandsNameCanvas[i].SetActive(true);
                 playerStandsNameText[i].text = lobbyMembers.ElementAt(i).Name;
-                Instantiate(playerStandPrefab, playerStands[i]);
+            }
+        }
+
+        private void AddMapsToDropdown()
+        {
+            mapDropdown.options.Clear();
+            foreach (var map in Resources.LoadAll<MapScriptableObject>("Maps"))
+            {
+                mapDropdown.options.Add(new TMP_Dropdown.OptionData(map.mapName));
+            }
+            LobbyManager.Instance.CurrentLobbyId.SetData("Map", mapDropdown.options[0].text);
+        }
+
+        private void SetLobbyInfo()
+        {
+            if (!LobbyManager.Instance.CurrentLobbyId.IsOwnedBy(SteamClient.SteamId))
+            {
+                lobbyVisibilityText.text = LobbyManager.Instance.CurrentLobbyId.GetData("Visibility");
+                lobbyMapText.text = LobbyManager.Instance.CurrentLobbyId.GetData("Map");
             }
         }
 
@@ -73,6 +120,18 @@ namespace Game.MenuUI
             RefreshPlayerStands();
         }
 
+        private void GameLobbySettingChanged(string message)
+        {
+            if (message.Contains("VISIBILITY"))
+            {
+                lobbyVisibilityText.text = message.Split(':')[2];
+            }
+            else if (message.Contains("MAP"))
+            {
+                lobbyMapText.text = message.Split(':')[2];
+            }
+        }
+
         #endregion
 
         #region LobbyInfoButtons
@@ -83,6 +142,52 @@ namespace Game.MenuUI
             lobbyInfoCanvasGroup.interactable = false;
             lobbyInfoCanvasGroup.blocksRaycasts = false;
             fadeCanvasGroup.DOFade(1f, 0.5f).SetEase(Ease.Linear).OnComplete(() => SceneManager.LoadScene("MainMenu"));
+        }
+        
+        public void StartButton()
+        {
+            if (LobbyManager.Instance.CurrentLobbyId.IsOwnedBy(SteamClient.SteamId))
+            {
+                LobbyManager.Instance.StartGame();
+            }
+        }
+
+        public void InviteButton()
+        {
+            SteamFriends.OpenGameInviteOverlay(LobbyManager.Instance.CurrentLobbyId.Id);
+        }
+
+        public void LobbyVisibility(TMP_Dropdown dropdown)
+        {
+            if (!LobbyManager.Instance.CurrentLobbyId.IsOwnedBy(SteamClient.SteamId)) return;
+            switch (dropdown.value)
+            {
+                case 0:
+                    LobbyManager.Instance.CurrentLobbyId.SetPrivate();
+                    LobbyManager.Instance.CurrentLobbyId.SetData("Visibility", "Private");
+                    LobbyManager.Instance.CurrentLobbyId.SendChatString("LOBBY:VISIBILITY:Private");
+                    Debug.Log("Lobby set to private.");
+                    break;
+                case 1:
+                    LobbyManager.Instance.CurrentLobbyId.SetFriendsOnly();
+                    LobbyManager.Instance.CurrentLobbyId.SetData("Visibility", "Friends");
+                    LobbyManager.Instance.CurrentLobbyId.SendChatString("LOBBY:VISIBILITY:Friends");
+                    Debug.Log("Lobby set to friends only.");
+                    break;
+                case 2:
+                    LobbyManager.Instance.CurrentLobbyId.SetPublic();
+                    LobbyManager.Instance.CurrentLobbyId.SetData("Visibility", "Public");
+                    LobbyManager.Instance.CurrentLobbyId.SendChatString("LOBBY:VISIBILITY:Public");
+                    Debug.Log("Lobby set to public.");
+                    break;
+            }
+        }
+
+        public void MapSelected(TMP_Dropdown dropdown)
+        {
+            if (!LobbyManager.Instance.CurrentLobbyId.IsOwnedBy(SteamClient.SteamId)) return;
+            LobbyManager.Instance.CurrentLobbyId.SetData("Map", dropdown.options[dropdown.value].text);
+            LobbyManager.Instance.CurrentLobbyId.SendChatString($"LOBBY:MAP:{dropdown.options[dropdown.value].text}");
         }
 
         #endregion

@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb925651a4fe144fbb86508c4091309, type: 3}
+  m_Name: SceneDebug
+  m_EditorClassIdentifier: 
+  mapName: SceneDebug
+  scene: {fileID: 102900000, guid: 9565ee073f11bff40938b537101c1969, type: 3}

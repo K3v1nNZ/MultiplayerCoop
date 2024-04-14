@@ -1,9 +1,12 @@
+using System.Linq;
 using System.Threading.Tasks;
 using FishNet;
+using FishNet.Connection;
+using FishNet.Managing.Scened;
+using FishNet.Transporting;
 using Steamworks;
 using Steamworks.Data;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Game.Networking
 {
@@ -12,13 +15,15 @@ namespace Game.Networking
         public static LobbyManager Instance;
         [SerializeField] private int maxPlayers;
         public Lobby CurrentLobbyId;
-        public bool InLobby;
+        public bool inLobby;
         private Friend _lobbyOwner;
         // Events
         public delegate void LobbyMemberJoin(Lobby lobby, Friend friend);
         public static event LobbyMemberJoin GameLobbyMemberJoin;
         public delegate void LobbyMemberLeave(Lobby lobby, Friend friend);
         public static event LobbyMemberLeave GameLobbyMemberLeave;
+        public delegate void LobbySettingsChanged(string message);
+        public static event LobbySettingsChanged GameLobbySettingsChanged;
 
         private void Awake()
         {
@@ -44,7 +49,9 @@ namespace Game.Networking
             SteamMatchmaking.OnLobbyMemberJoined += OnLobbyMemberJoin;
             SteamMatchmaking.OnLobbyMemberDisconnected += OnLobbyMemberLeave;
             SteamMatchmaking.OnLobbyMemberLeave += OnLobbyMemberLeave;
+            SteamMatchmaking.OnChatMessage += OnLobbyMessage;
             SteamFriends.OnGameLobbyJoinRequested += OnGameLobbyJoinRequest;
+            InstanceFinder.ServerManager.OnRemoteConnectionState += OnClientConnectionState;
         }
         
         private void OnDisable()
@@ -53,6 +60,8 @@ namespace Game.Networking
             SteamMatchmaking.OnLobbyMemberJoined -= OnLobbyMemberJoin;
             SteamMatchmaking.OnLobbyMemberDisconnected -= OnLobbyMemberLeave;
             SteamMatchmaking.OnLobbyMemberLeave -= OnLobbyMemberLeave;
+            SteamMatchmaking.OnChatMessage -= OnLobbyMessage;
+            SteamFriends.OnGameLobbyJoinRequested -= OnGameLobbyJoinRequest;
         }
 
         private void OnLobbyEntered(Lobby lobby)
@@ -60,8 +69,12 @@ namespace Game.Networking
             Debug.Log("OnLobbyEntered");
             CurrentLobbyId = lobby;
             _lobbyOwner = lobby.Owner;
-            InLobby = true;
-            SceneManager.LoadScene("LobbyMenu");
+            inLobby = true;
+            UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyMenu");
+            if (!lobby.IsOwnedBy(SteamClient.SteamId))
+            {
+                InstanceFinder.ClientManager.StartConnection(lobby.Owner.Id.ToString());
+            }
         }
 
         private void OnLobbyMemberJoin(Lobby lobby, Friend friend)
@@ -76,14 +89,27 @@ namespace Game.Networking
             if (friend.Id == _lobbyOwner.Id)
             {
                 CurrentLobbyId.Leave();
-                InLobby = false;
-                if (SceneManager.GetActiveScene().name == "LobbyMenu")
+                inLobby = false;
+                if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "LobbyMenu")
                 {
-                    SceneManager.LoadScene("MainMenu");
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
                 }
                 return;
             }
             GameLobbyMemberLeave?.Invoke(lobby, friend);
+            
+        }
+        
+        private void OnLobbyMessage(Lobby lobby, Friend friend, string message)
+        {
+            Debug.Log("OnLobbyMessage");
+            if (message.StartsWith("LOBBY:"))
+            {
+                if (CurrentLobbyId.IsOwnedBy(friend.Id))
+                {
+                    GameLobbySettingsChanged?.Invoke(message);
+                }
+            }
             
         }
 
@@ -96,6 +122,32 @@ namespace Game.Networking
             }
             LeaveLobby();
             lobby.Join();
+        }
+
+        private void OnClientConnectionState(NetworkConnection connection, RemoteConnectionStateArgs state)
+        {
+            Friend[] lobbyMembers = CurrentLobbyId.Members.ToArray();
+            SteamId id = new() { Value = ulong.Parse(connection.GetAddress()) };
+            if (state.ConnectionState == RemoteConnectionState.Started && !lobbyMembers.Contains(new Friend(id)))
+            {
+                Debug.Log("Client connection attempted from non-lobby member. Disconnecting client.");
+                connection.Disconnect(true);
+            }
+        }
+
+        public void StartGame()
+        {
+            if (!CurrentLobbyId.IsOwnedBy(SteamClient.SteamId)) return;
+            foreach (MapScriptableObject map in Resources.LoadAll<MapScriptableObject>("Maps"))
+            {
+                if (map.mapName == CurrentLobbyId.GetData("Map"))
+                {
+                    SceneLoadData data = new(map.scene.name);
+                    data.ReplaceScenes = ReplaceOption.All;
+                    InstanceFinder.SceneManager.LoadGlobalScenes(data);
+                    break;
+                }
+            }
         }
         
         public async Task<bool> JoinLobby()
@@ -110,26 +162,28 @@ namespace Game.Networking
                 else
                 {
                     Debug.LogError("Cannot join own lobby.");
-                    InLobby = false;
+                    inLobby = false;
                     return false;
                 }
             }
             else
             {
                 Debug.LogError("No lobbies found.");
-                InLobby = false;
+                inLobby = false;
                 return false;
             }
-            InLobby = false;
+            inLobby = false;
             return false;
         }
 
         public void LeaveLobby()
         {
-            if (InLobby)
+            if (inLobby)
             {
                 CurrentLobbyId.Leave();
-                InLobby = false;
+                inLobby = false;
+                InstanceFinder.ClientManager.StopConnection();
+                InstanceFinder.ServerManager.StopConnection(true);
             }
             else
             {
@@ -139,16 +193,25 @@ namespace Game.Networking
         
         public async Task<bool> CreateLobby()
         {
-            var lobby = await SteamMatchmaking.CreateLobbyAsync(maxPlayers);
+            Lobby? lobby = await SteamMatchmaking.CreateLobbyAsync(maxPlayers);
             if (!lobby.HasValue)
             {
                 return false;
             }
+            if (InstanceFinder.ServerManager.StartConnection())
+            {
+                InstanceFinder.ClientManager.StartConnection(SteamClient.SteamId.ToString());
+            }
+            else
+            {
+                CurrentLobbyId.Leave();
+                inLobby = false;
+                return false;
+            }
             CurrentLobbyId = lobby.Value;
             _lobbyOwner = CurrentLobbyId.Owner;
-            InLobby = true;
-            CurrentLobbyId.SetPublic();
-            CurrentLobbyId.SetJoinable(true);
+            inLobby = true;
+            CurrentLobbyId.SetData("Visibility", "Private");
             return true;
         }
     }
