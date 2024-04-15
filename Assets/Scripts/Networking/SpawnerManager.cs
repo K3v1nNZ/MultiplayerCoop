@@ -9,7 +9,7 @@ namespace Game.Networking
     {
         [SerializeField] private Transform[] spawnPoints;
         [SerializeField] private GameObject playerPrefab;
-        private readonly SyncVar<int> _spawnIndex = new SyncVar<int>(0);
+        private readonly SyncVar<int> _spawnIndex = new(0);
 
         public override void OnStartClient()
         {

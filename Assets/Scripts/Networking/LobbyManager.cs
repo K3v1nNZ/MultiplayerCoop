@@ -126,7 +126,7 @@ namespace Game.Networking
             
         }
 
-        private void OnGameLobbyJoinRequest(Lobby lobby, SteamId friend)
+        private async void OnGameLobbyJoinRequest(Lobby lobby, SteamId friend)
         {
             if (lobby.MemberCount >= maxPlayers)
             {
@@ -134,17 +134,18 @@ namespace Game.Networking
                 return;
             }
             LeaveLobby();
-            lobby.Join();
-            InstanceFinder.ClientManager.StartConnection(lobby.Owner.Id.ToString());
+            RoomEnter result = await lobby.Join();
+            if (result == RoomEnter.Success)
+            {
+                InstanceFinder.ClientManager.StartConnection(lobby.Owner.Id.ToString());
+            }
         }
 
         private void OnClientConnectionState(NetworkConnection connection, RemoteConnectionStateArgs state)
         {
             SteamId id = new() { Value = ulong.Parse(connection.GetAddress()) };
-            if (id == SteamClient.SteamId) return;
-            if (state.ConnectionState == RemoteConnectionState.Started && !LobbyMembers.Contains(new Friend(id)))
+            if (state.ConnectionState == RemoteConnectionState.Started && !LobbyMembers.Contains(new Friend(id)) && id != SteamClient.SteamId)
             {
-                Debug.Log(connection.GetAddress());
                 Debug.Log("Client connection attempted from non-lobby member. Disconnecting client.");
                 connection.Disconnect(true);
             }
