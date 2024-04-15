@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdb925651a4fe144fbb86508c4091309, type: 3}
-  m_Name: DebugScene
+  m_Name: MapList
   m_EditorClassIdentifier: 
-  mapName: DebugScene
-  scene: {fileID: 102900000, guid: 0424ac7ffa58a9f41aed856a751e86b6, type: 3}
+  maps:
+  - DebugScene
+  - SceneDebug

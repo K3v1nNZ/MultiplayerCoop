@@ -74,27 +74,21 @@ namespace Game.MenuUI
                 playerStandNameCanvas.SetActive(false);
             }
             
-            Friend[] lobbyMembers = LobbyManager.Instance.CurrentLobbyId.Members.ToArray();
-            Friend self = new(SteamClient.SteamId);
-            if (lobbyMembers.Contains(self))
-            {
-                lobbyMembers = lobbyMembers.Where(friend => friend.Id != self.Id).ToArray();
-            }
-            
-            for (int i = 0; i < lobbyMembers.Count(); i++)
+            for (int i = 0; i < LobbyManager.Instance.LobbyMembers.Count(); i++)
             {
                 Instantiate(playerStandPrefab, playerStands[i]);
                 playerStandsNameCanvas[i].SetActive(true);
-                playerStandsNameText[i].text = lobbyMembers.ElementAt(i).Name;
+                playerStandsNameText[i].text = LobbyManager.Instance.LobbyMembers.ElementAt(i).Name;
             }
         }
 
         private void AddMapsToDropdown()
         {
             mapDropdown.options.Clear();
-            foreach (var map in Resources.LoadAll<MapScriptableObject>("Maps"))
+            MapScriptableObject maps = Resources.Load<MapScriptableObject>("Maps/MapList");
+            foreach (string map in maps.maps)
             {
-                mapDropdown.options.Add(new TMP_Dropdown.OptionData(map.mapName));
+                mapDropdown.options.Add(new TMP_Dropdown.OptionData(map));
             }
             LobbyManager.Instance.CurrentLobbyId.SetData("Map", mapDropdown.options[0].text);
         }
