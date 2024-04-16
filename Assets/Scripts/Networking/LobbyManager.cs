@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Managing.Scened;
+using FishNet.Object;
 using FishNet.Transporting;
 using Steamworks;
 using Steamworks.Data;
@@ -157,6 +158,14 @@ namespace Game.Networking
             {
                 Debug.Log("Client connection attempted from non-lobby member. Disconnecting client.");
                 connection.Disconnect(true);
+            }
+
+            if (state.ConnectionState == RemoteConnectionState.Stopped)
+            {
+                foreach (NetworkObject networkObject in connection.Objects)
+                {
+                    InstanceFinder.ServerManager.Despawn(networkObject);
+                }
             }
         }
 
