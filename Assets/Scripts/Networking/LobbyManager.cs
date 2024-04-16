@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FishNet;
 using FishNet.Connection;
@@ -64,6 +64,7 @@ namespace Game.Networking
             SteamMatchmaking.OnLobbyMemberLeave -= OnLobbyMemberLeave;
             SteamMatchmaking.OnChatMessage -= OnLobbyMessage;
             SteamFriends.OnGameLobbyJoinRequested -= OnGameLobbyJoinRequest;
+            InstanceFinder.ServerManager.OnRemoteConnectionState -= OnClientConnectionState;
         }
 
         private void OnLobbyEntered(Lobby lobby)
@@ -162,6 +163,7 @@ namespace Game.Networking
         public void StartGame()
         {
             if (!CurrentLobbyId.IsOwnedBy(SteamClient.SteamId)) return;
+            CurrentLobbyId.SetJoinable(false);
             SceneLoadData data = new(CurrentLobbyId.GetData("Map"));
             data.ReplaceScenes = ReplaceOption.All;
             InstanceFinder.SceneManager.LoadGlobalScenes(data);
