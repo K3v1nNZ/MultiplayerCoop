@@ -136,6 +136,11 @@ namespace Game.Networking
                 Debug.LogError("Lobby is full.");
                 return;
             }
+            if (lobby.GetData("Version") != Application.version)
+            {
+                Debug.LogError("Version mismatch.");
+                return;
+            }
             LeaveLobby();
             RoomEnter result = await lobby.Join();
             if (result == RoomEnter.Success)
@@ -169,9 +174,16 @@ namespace Game.Networking
             {
                 foreach (Lobby lobby in lobbies)
                 {
-                    if (lobbies[0].Owner.Id == SteamClient.SteamId)
+                    if (lobby.Owner.Id == SteamClient.SteamId)
                     {
                         Debug.Log("Cannot join own lobby.");
+                        inLobby = false;
+                        continue;
+                    }
+
+                    if (lobby.GetData("Version") != Application.version)
+                    {
+                        Debug.Log("Version mismatch.");
                         inLobby = false;
                         continue;
                     }
@@ -239,6 +251,7 @@ namespace Game.Networking
             _lobbyOwner = CurrentLobbyId.Owner;
             inLobby = true;
             CurrentLobbyId.SetPrivate();
+            CurrentLobbyId.SetData("Version", Application.version);
             CurrentLobbyId.SetData("Visibility", "Private");
             return true;
         }
