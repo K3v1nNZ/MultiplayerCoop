@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using FishNet.Managing.Logging;
 using FishNet.Object;
 using Steamworks;
 using UnityEngine;
@@ -32,7 +33,13 @@ namespace Game.Player
             _audioSource.Play();
         }
 
-        [Client]
+        [Client(RequireOwnership = true, Logging = LoggingType.Off)]
+        public override void OnStopClient()
+        {
+            base.Despawn();
+        }
+
+        [Client(RequireOwnership = true, Logging = LoggingType.Off)]
         private void Update()
         {
             SteamUser.VoiceRecord = Input.GetKey(KeyCode.V);

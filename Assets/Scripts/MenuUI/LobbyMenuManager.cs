@@ -11,6 +11,8 @@ namespace Game.MenuUI
 {
     public class LobbyMenuManager : MonoBehaviour
     {
+        [SerializeField] private Camera mainCamera;
+        [SerializeField] private Transform[] cameraPoints;
         [SerializeField] private CanvasGroup fadeCanvasGroup;
         [SerializeField] private CanvasGroup lobbyInfoCanvasGroup;
         [SerializeField] private GameObject[] lobbySettings;
@@ -80,6 +82,8 @@ namespace Game.MenuUI
                 playerStandsNameCanvas[i].SetActive(true);
                 playerStandsNameText[i].text = LobbyManager.Instance.LobbyMembers.ElementAt(i).Name;
             }
+            mainCamera.transform.DOMove(cameraPoints[LobbyManager.Instance.LobbyMembers.Count()].position, 0.5f).SetEase(Ease.OutExpo);
+            mainCamera.transform.DORotate(cameraPoints[LobbyManager.Instance.LobbyMembers.Count()].rotation.eulerAngles, 0.5f).SetEase(Ease.OutExpo);
         }
 
         private void AddMapsToDropdown()

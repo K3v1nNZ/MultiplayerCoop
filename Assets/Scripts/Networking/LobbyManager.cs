@@ -89,18 +89,19 @@ namespace Game.Networking
 
         private void OnLobbyMemberJoin(Lobby lobby, Friend friend)
         {
+            if (!lobby.Id.IsValid) return;
             Debug.Log("OnLobbyMemberJoin");
-            // add friend to list of lobby members
             LobbyMembers.Add(friend);
             GameLobbyMemberJoin?.Invoke(lobby, friend);
         }
 
         private void OnLobbyMemberLeave(Lobby lobby, Friend friend)
         {
+            if (!lobby.Id.IsValid) return;
             Debug.Log("OnLobbyMemberLeave");
             if (friend.Id == _lobbyOwner.Id)
             {
-                CurrentLobbyId.Leave();
+                lobby.Leave();
                 inLobby = false;
                 if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "LobbyMenu")
                 {
@@ -109,12 +110,13 @@ namespace Game.Networking
                 LobbyMembers.Clear();
                 return;
             }
-            GameLobbyMemberLeave?.Invoke(lobby, friend);
             LobbyMembers.Remove(friend);
+            GameLobbyMemberLeave?.Invoke(lobby, friend);
         }
         
         private void OnLobbyMessage(Lobby lobby, Friend friend, string message)
         {
+            if (!lobby.Id.IsValid) return;
             Debug.Log("OnLobbyMessage");
             if (message.StartsWith("LOBBY:"))
             {
@@ -128,6 +130,7 @@ namespace Game.Networking
 
         private async void OnGameLobbyJoinRequest(Lobby lobby, SteamId friend)
         {
+            if (!lobby.Id.IsValid) return;
             if (lobby.MemberCount >= maxPlayers)
             {
                 Debug.LogError("Lobby is full.");
@@ -162,29 +165,35 @@ namespace Game.Networking
         public async Task<bool> JoinLobby()
         {
             Lobby[] lobbies = await SteamMatchmaking.LobbyList.FilterDistanceWorldwide().RequestAsync();
-            if (lobbies != null && lobbies.Length > 0)
+            if (lobbies is { Length: > 0 })
             {
-                if (lobbies[0].Owner.Id != SteamClient.SteamId)
+                foreach (Lobby lobby in lobbies)
                 {
-                    RoomEnter result = await lobbies[0].Join();
-                    if (result == RoomEnter.Success)
+                    if (lobbies[0].Owner.Id == SteamClient.SteamId)
                     {
-                        InstanceFinder.ClientManager.StartConnection(lobbies[0].Owner.Id.ToString());
-                        return true;
-                    }
-                    else
-                    {
-                        Debug.LogError("Failed to join lobby.");
+                        Debug.Log("Cannot join own lobby.");
                         inLobby = false;
-                        return false;
+                        continue;
+                    }
+                    if (lobby.MemberCount < maxPlayers)
+                    {
+                        RoomEnter result = await lobby.Join();
+                        if (result == RoomEnter.Success)
+                        {
+                            InstanceFinder.ClientManager.StartConnection(lobby.Owner.Id.ToString());
+                            return true;
+                        }
+                        else
+                        {
+                            Debug.LogError("Failed to join lobby.");
+                            inLobby = false;
+                            continue;
+                        }
                     }
                 }
-                else
-                {
-                    Debug.LogError("Cannot join own lobby.");
-                    inLobby = false;
-                    return false;
-                }
+                Debug.LogError("No lobbies found.");
+                inLobby = false;
+                return false;
             }
             else
             {
