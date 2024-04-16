@@ -10,6 +10,8 @@ namespace Game.Player
         [SerializeField] private float jumpForce;
         [SerializeField] private float gravity;
         [SerializeField] private float mouseSensitivity;
+        [SerializeField] private GameObject firstPersonAssets;
+        [SerializeField] private GameObject thirdPersonAssets;
         [HideInInspector] public bool canMove = true;
         [HideInInspector] public bool isRunning;
         private CharacterController _characterController;
@@ -24,9 +26,13 @@ namespace Game.Player
                 playerCamera = Camera.main;
                 playerCamera.transform.SetParent(transform);
                 playerCamera.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+                firstPersonAssets.SetActive(true);
+                thirdPersonAssets.SetActive(false);
             }
             else
             {
+                firstPersonAssets.SetActive(false);
+                thirdPersonAssets.SetActive(true);
                 this.enabled = false;
             }
         }
