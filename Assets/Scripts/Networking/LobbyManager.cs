@@ -153,19 +153,20 @@ namespace Game.Networking
 
         private void OnClientConnectionState(NetworkConnection connection, RemoteConnectionStateArgs state)
         {
+            if (state.ConnectionState == RemoteConnectionState.Stopped)
+            {
+                foreach (NetworkObject behaviour in connection.Objects)
+                {
+                    InstanceFinder.ServerManager.Despawn(behaviour);
+                }
+                return;
+            }
+            
             SteamId id = new() { Value = ulong.Parse(connection.GetAddress()) };
             if (state.ConnectionState == RemoteConnectionState.Started && !LobbyMembers.Contains(new Friend(id)) && id != SteamClient.SteamId)
             {
                 Debug.Log("Client connection attempted from non-lobby member. Disconnecting client.");
                 connection.Disconnect(true);
-            }
-
-            if (state.ConnectionState == RemoteConnectionState.Stopped)
-            {
-                foreach (NetworkObject networkObject in connection.Objects)
-                {
-                    InstanceFinder.ServerManager.Despawn(networkObject);
-                }
             }
         }
 

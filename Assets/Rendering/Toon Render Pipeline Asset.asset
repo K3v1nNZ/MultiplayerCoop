@@ -21,7 +21,7 @@ MonoBehaviour:
     SpecularThreshold: 0.99
     RimThreshold: 0.5
     Mode: 0
-    Smoothness: 0.02
+    Smoothness: 0.566
     SpecularSmoothness: 0.005
     RimSmoothness: 0.1
     RampTexture: {fileID: 0}
@@ -37,7 +37,7 @@ MonoBehaviour:
     RenderTextureFormat: 4
     AllowHdr: 0
     Stencil: 0
-    Msaa: 1
+    Msaa: 8
     RenderScale: 1
     MaxRenderTextureWidth: 0
     MaxRenderTextureHeight: 0
@@ -58,14 +58,14 @@ MonoBehaviour:
     Mode: 1
     Threshold: 1
     CrispAntiAliased: 0
-    Smoothness: 0.075
+    Smoothness: 0
     MaxDistance: 100
     DistanceFade: 0.1
     Pattern: {fileID: 0}
     PatternScale: {x: 1, y: 0, z: 1}
     ShadowMaps:
       DepthBits: 16
-      Blur: 0
+      Blur: 1
       BlurEarlyBail: 1
       BlurEarlyBailThreshold: 0.01
       BlurScatter: 1
@@ -82,9 +82,9 @@ MonoBehaviour:
         Enabled: 1
         AtlasSize: 1024
         CascadeCount: 4
-        CascadeRatio1: 0.1
-        CascadeRatio2: 0.25
-        CascadeRatio3: 0.5
+        CascadeRatio1: 0.026
+        CascadeRatio2: 0.053
+        CascadeRatio3: 0.153
         DepthBias: 0.035
         NormalBias: 0
         SlopeBias: 0
@@ -96,7 +96,8 @@ MonoBehaviour:
       ShadowPositionOffset: {x: 0, y: 0}
       ReceiverPlaneY: 0
   Extensions:
-    Extensions: []
+    Extensions:
+    - {fileID: 11400000, guid: fcd02cea928bb7e48a8083553c1a0c82, type: 2}
   PostProcessing:
     Enabled: 1
     Passes: []

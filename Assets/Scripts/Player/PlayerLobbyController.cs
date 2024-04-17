@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using FishNet.Managing.Logging;
 using FishNet.Object;
+using FishNet.Transporting;
 using Steamworks;
 using UnityEngine;
 
@@ -9,34 +12,16 @@ namespace Game.Player
     public class PlayerLobbyController : NetworkBehaviour
     {
         private AudioSource _audioSource;
-        private MemoryStream _output;
-        private MemoryStream _stream;
-        private MemoryStream _input;
-        private int _optimalRate;
-        private int _clipBufferSize;
-        private float[] _clipBuffer;
-        private int _playbackBuffer;
-        private int _dataPosition;
-        private int _dataReceived;
+        private MemoryStream _compressedVoiceStream = new();
+        private MemoryStream _decompressedVoiceStream = new();
+        private Queue<float> _streamingReadQueue = new();
 
-        public override void OnStartClient()
+        private void Start()
         {
             _audioSource = GetComponent<AudioSource>();
-            _optimalRate = (int)SteamUser.OptimalSampleRate;
-            _clipBufferSize = _optimalRate * 10;
-            _clipBuffer = new float[_clipBufferSize];
-            _stream = new MemoryStream();
-            _output = new MemoryStream();
-            _input = new MemoryStream();
-            _audioSource.clip = AudioClip.Create("VoiceData", 256, 1, _optimalRate, true, OnAudioRead, null);
+            _audioSource.clip = AudioClip.Create("SteamVoice", 256, 1, (int)SteamUser.OptimalSampleRate, true, PcmReaderCallback);
             _audioSource.loop = true;
             _audioSource.Play();
-        }
-
-        [Client(RequireOwnership = true, Logging = LoggingType.Off)]
-        public override void OnStopClient()
-        {
-            base.Despawn();
         }
 
         [Client(RequireOwnership = true, Logging = LoggingType.Off)]
@@ -45,54 +30,49 @@ namespace Game.Player
             SteamUser.VoiceRecord = Input.GetKey(KeyCode.V);
             if (SteamUser.HasVoiceData)
             {
-                int compressedWritten = SteamUser.ReadVoiceData(_stream);
-                _stream.Position = 0;
-                VoiceServerRpc(_stream.GetBuffer(), compressedWritten);
+                _compressedVoiceStream.Position = 0;
+                int numBytesWritten = SteamUser.ReadVoiceData(_compressedVoiceStream);
+                VoiceServerRpc(new ArraySegment<byte>(_compressedVoiceStream.GetBuffer(), 0, numBytesWritten));
             }
         }
 
-        [ServerRpc]
-        private void VoiceServerRpc(byte[] compressed, int bytesWritten)
+        [ServerRpc(RequireOwnership = true)]
+        private void VoiceServerRpc(ArraySegment<byte> voiceData, Channel channel = Channel.Unreliable)
         {
-            VoiceDataObserverRpc(compressed, bytesWritten);
+            VoiceDataObserverRpc(voiceData);
         }
 
         [ObserversRpc(ExcludeOwner = true)]
-        private void VoiceDataObserverRpc(byte[] compressed, int bytesWritten)
+        private void VoiceDataObserverRpc(ArraySegment<byte> voiceData, Channel channel = Channel.Unreliable)
         {
-            _input.Write(compressed, 0, bytesWritten);
-            _input.Position = 0;
-            int uncompressedWritten = SteamUser.DecompressVoice(_input, bytesWritten, _output);
-            _input.Position = 0;
-            byte[] outputBuffer = _output.GetBuffer();
-            WriteToClip(outputBuffer, uncompressedWritten);
-            _output.Position = 0;
-        }
-
-        [Client]
-        private void OnAudioRead(float[] data)
-        {
-            for (int i = 0; i < data.Length; ++i)
+            _compressedVoiceStream.Position = 0;
+            _compressedVoiceStream.Write(voiceData);
+            _compressedVoiceStream.Position = 0;
+            _decompressedVoiceStream.Position = 0;
+            int numBytesWritten = SteamUser.DecompressVoice(_compressedVoiceStream, voiceData.Count, _decompressedVoiceStream);
+            _decompressedVoiceStream.Position = 0;
+            while (_decompressedVoiceStream.Position < numBytesWritten)
             {
-                data[i] = 0;
-                if (_playbackBuffer > 0)
-                {
-                    _dataPosition = (_dataPosition + 1) % _clipBufferSize;
-                    data[i] = _clipBuffer[_dataPosition];
-                    _playbackBuffer--;
-                }
+                byte byte1 = (byte)_decompressedVoiceStream.ReadByte();
+                byte byte2 = (byte)_decompressedVoiceStream.ReadByte();
+                short pcmShort = (short)((byte2 << 8) | (byte1 << 0));
+                float pcmFloat = Convert.ToSingle(pcmShort) / short.MaxValue;
+                _streamingReadQueue.Enqueue(pcmFloat);
             }
         }
 
-        [Client]
-        private void WriteToClip(byte[] uncompressed, int iSize)
+        private void PcmReaderCallback(float[] data)
         {
-            for (int i = 0; i < iSize; i += 2)
+            for (int i = 0; i < data.Length; i++)
             {
-                float converted = (short)(uncompressed[i] | uncompressed[i + 1] << 8) / 32767.0f;
-                _clipBuffer[_dataReceived] = converted;
-                _dataReceived = (_dataReceived + 1) % _clipBufferSize;
-                _playbackBuffer++;
+                if (_streamingReadQueue.TryDequeue(out var sample))
+                {
+                    data[i] = sample;
+                }
+                else
+                {
+                    data[i] = 0.0f;
+                }
             }
         }
     }
