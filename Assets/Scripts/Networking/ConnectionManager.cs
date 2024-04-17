@@ -49,6 +49,8 @@ namespace Game.Networking
         {
             if (args.ConnectionState == LocalConnectionState.Stopped)
             {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
                 UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
             }
         }
