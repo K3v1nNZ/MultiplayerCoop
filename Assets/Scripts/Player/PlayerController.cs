@@ -18,6 +18,14 @@ namespace Game.Player
         private Camera playerCamera;
         private Vector3 _moveDirection;
         private float _rotationY;
+        public PlayerRole playerRole;
+        public enum PlayerRole
+        {
+            Assassin,
+            Informant,
+            Infiltrator,
+            Hacker
+        }
 
         public override void OnStartClient()
         {
@@ -25,26 +33,27 @@ namespace Game.Player
             {
                 playerCamera = Camera.main;
                 playerCamera.transform.SetParent(transform);
-                playerCamera.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+                playerCamera.transform.localPosition = new Vector3(0f, 0.725f, 0f);
                 firstPersonAssets.SetActive(true);
                 thirdPersonAssets.SetActive(false);
+                _characterController = GetComponent<CharacterController>();
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
             else
             {
                 firstPersonAssets.SetActive(false);
                 thirdPersonAssets.SetActive(true);
-                this.enabled = false;
             }
         }
 
-        private void Start()
+        private void Update()
         {
-            _characterController = GetComponent<CharacterController>();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            if (!base.IsOwner) return;
+            Movement();
         }
 
-        private void Update()
+        private void Movement()
         {
             isRunning = Input.GetKey(KeyCode.LeftShift);
             Vector3 forward = transform.TransformDirection(Vector3.forward);

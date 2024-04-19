@@ -1,6 +1,7 @@
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using Game.Player;
 using UnityEngine;
 
 namespace Game.Networking
@@ -20,6 +21,15 @@ namespace Game.Networking
         private void SpawnPlayerServerRpc(NetworkConnection player)
         {
             GameObject playerObject = Instantiate(playerPrefab, spawnPoints[_spawnIndex.Value].position, Quaternion.identity);
+            PlayerController playerController = playerObject.GetComponent<PlayerController>();
+            playerController.playerRole = _spawnIndex.Value switch
+            {
+                0 => PlayerController.PlayerRole.Assassin,
+                1 => PlayerController.PlayerRole.Informant,
+                2 => PlayerController.PlayerRole.Infiltrator,
+                3 => PlayerController.PlayerRole.Hacker,
+                _ => playerController.playerRole
+            };
             _spawnIndex.Value++;
             ServerManager.Spawn(playerObject, player);
         }
