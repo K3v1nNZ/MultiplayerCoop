@@ -5,6 +5,7 @@ namespace Game.Player
 {
     public class PlayerController : NetworkBehaviour
     {
+        public static PlayerController Instance;
         [SerializeField] private float walkSpeed;
         [SerializeField] private float runSpeed;
         [SerializeField] private float jumpForce;

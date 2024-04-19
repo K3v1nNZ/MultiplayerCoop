@@ -18,7 +18,7 @@ MonoBehaviour:
   - {fileID: 4800000, guid: 3774c88acba044f58195398345cfc7cd, type: 3}
   GlobalRampSettings:
     Threshold: 0
-    SpecularThreshold: 0.99
+    SpecularThreshold: 1
     RimThreshold: 0.5
     Mode: 0
     Smoothness: 0.566
@@ -30,7 +30,7 @@ MonoBehaviour:
       SpecularOffset: 0
       DistanceAttenuationFactor: 1
   CameraRendererSettings:
-    AdditionalLights: 0
+    AdditionalLights: 1
     TiledLighting: 0
     MaxLightsPerTile: 32
     OverrideRenderTextureFormat: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
     PatternScale: {x: 1, y: 0, z: 1}
     ShadowMaps:
       DepthBits: 16
-      Blur: 1
+      Blur: 3
       BlurEarlyBail: 1
       BlurEarlyBailThreshold: 0.01
       BlurScatter: 1
