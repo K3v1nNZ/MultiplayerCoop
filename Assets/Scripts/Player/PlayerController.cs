@@ -63,6 +63,7 @@ namespace Game.Player
             float horizontal = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
             float moveDirectionY = _moveDirection.y;
             _moveDirection = (forward * vertical) + (right * horizontal);
+            _moveDirection = Vector3.ClampMagnitude(_moveDirection, (isRunning ? runSpeed : walkSpeed));
 
             if (Input.GetButton("Jump") && canMove && _characterController.isGrounded)
             {
