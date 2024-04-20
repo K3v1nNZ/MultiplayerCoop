@@ -15,7 +15,7 @@ namespace Game.Player
                 if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactableObj))
                 {
                     interactPrompt.SetActive(true);
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (PlayerInputManager.Instance.PlayerInputActions.Player.Interact.WasPressedThisFrame())
                     {
                         interactableObj.Interact(transform.parent.GetComponent<PlayerController>());
                     }

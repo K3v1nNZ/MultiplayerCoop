@@ -27,7 +27,7 @@ namespace Game.Player
         [Client(RequireOwnership = true, Logging = LoggingType.Off)]
         private void Update()
         {
-            SteamUser.VoiceRecord = Input.GetKey(KeyCode.V);
+            SteamUser.VoiceRecord = PlayerInputManager.Instance.PlayerInputActions.Player.VoiceChat.IsPressed();
             if (SteamUser.HasVoiceData)
             {
                 _compressedVoiceStream.Position = 0;

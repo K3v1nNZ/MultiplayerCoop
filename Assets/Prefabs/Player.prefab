@@ -254,7 +254,7 @@ MonoBehaviour:
   runSpeed: 11.5
   jumpForce: 8
   gravity: 20
-  mouseSensitivity: 2
+  mouseSensitivity: 0.1
   firstPersonAssets: {fileID: 5646116852629472735}
   thirdPersonAssets: {fileID: 8293911676798495355}
   canMove: 1

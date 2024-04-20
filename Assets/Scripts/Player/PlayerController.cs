@@ -1,5 +1,6 @@
 using FishNet.Object;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Player
 {
@@ -16,8 +17,10 @@ namespace Game.Player
         [HideInInspector] public bool canMove = true;
         [HideInInspector] public bool isRunning;
         private CharacterController _characterController;
+        private PlayerInputActions _inputActions;
         private Camera playerCamera;
         private Vector3 _moveDirection;
+        private Vector2 _moveInput;
         private float _rotationY;
         public PlayerRole playerRole;
         public enum PlayerRole
@@ -32,6 +35,7 @@ namespace Game.Player
         {
             if (base.IsOwner)
             {
+                _inputActions = PlayerInputManager.Instance.PlayerInputActions;
                 playerCamera = Camera.main;
                 playerCamera.transform.SetParent(transform);
                 playerCamera.transform.localPosition = new Vector3(0f, 0.725f, 0f);
@@ -56,16 +60,16 @@ namespace Game.Player
 
         private void Movement()
         {
-            isRunning = Input.GetKey(KeyCode.LeftShift);
+            isRunning = _inputActions.Player.Sprint.IsPressed();
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
-            float vertical = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
-            float horizontal = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
+            float vertical = canMove ? (isRunning ? runSpeed : walkSpeed) * _moveInput.y : 0;
+            float horizontal = canMove ? (isRunning ? runSpeed : walkSpeed) * _moveInput.x : 0;
             float moveDirectionY = _moveDirection.y;
             _moveDirection = (forward * vertical) + (right * horizontal);
             _moveDirection = Vector3.ClampMagnitude(_moveDirection, (isRunning ? runSpeed : walkSpeed));
-
-            if (Input.GetButton("Jump") && canMove && _characterController.isGrounded)
+            
+            if (_inputActions.Player.Jump.IsPressed() && canMove && _characterController.isGrounded)
             {
                 _moveDirection.y = jumpForce;
             }
@@ -78,15 +82,15 @@ namespace Game.Player
             {
                 _moveDirection.y -= gravity * Time.deltaTime;
             }
-
+            
             _characterController.Move(_moveDirection * Time.deltaTime);
 
             if (canMove && playerCamera != null)
             {
-                _rotationY += -Input.GetAxis("Mouse Y") * mouseSensitivity;
+                _rotationY += -_inputActions.Player.Look.ReadValue<Vector2>().y * mouseSensitivity;
                 _rotationY = Mathf.Clamp(_rotationY, -90f, 90f);
                 playerCamera.transform.localRotation = Quaternion.Euler(_rotationY, 0, 0);
-                transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
+                transform.rotation *= Quaternion.Euler(0, _inputActions.Player.Look.ReadValue<Vector2>().x * mouseSensitivity, 0);
             }
         }
     }
