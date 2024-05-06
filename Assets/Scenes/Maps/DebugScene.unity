@@ -874,6 +874,10 @@ MonoBehaviour:
   doorParent: {fileID: 1130075895}
   parentOpenRotation: 90
   parentCloseRotation: 0
+  pins: 3
+  pinSpeed: 1
+  startLocked: 1
+  lockPickMiniGame: {fileID: 8982719402711768560, guid: 0f1039ce0858bf34191f333ab98180a9, type: 3}
 --- !u!65 &959436224
 BoxCollider:
   m_ObjectHideFlags: 0

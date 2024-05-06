@@ -1,5 +1,6 @@
 using DG.Tweening;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Game.Player;
 using UnityEngine;
 
@@ -10,13 +11,35 @@ namespace Game.Environment
         [SerializeField] private Transform doorParent;
         [SerializeField] private float parentOpenRotation;
         [SerializeField] private float parentCloseRotation;
+        [SerializeField] private int pins;
+        [SerializeField] private float pinSpeed;
+        [SerializeField] private bool startLocked;
+        public readonly SyncVar<bool> IsLocked = new(false);
+        public GameObject lockPickMiniGame;
         private float _openRotation;
         private bool _isOpen;
         private AudioSource _audioSource;
         
         public void Interact(PlayerController interactor)
         {
-            ServerToggleDoor(interactor);
+            if (!IsLocked.Value)
+            {
+                ServerToggleDoor(interactor);
+            }
+            else
+            {
+                GameObject lockPickGame = lockPickMiniGame;
+                LockPickMinigame lockPickMinigame = lockPickGame.GetComponent<LockPickMinigame>();
+                lockPickMinigame.door = this;
+                lockPickMinigame.pins = pins;
+                lockPickMinigame.pinSpeed = pinSpeed;
+                Instantiate(lockPickMinigame);
+            }
+        }
+        
+        public override void OnStartServer()
+        {
+            IsLocked.Value = startLocked;
         }
 
         public override void OnStartClient()

@@ -35,6 +35,7 @@ namespace Game.Player
         {
             if (base.IsOwner)
             {
+                Instance = this;
                 _inputActions = PlayerInputManager.Instance.PlayerInputActions;
                 playerCamera = Camera.main;
                 playerCamera.transform.SetParent(transform);
@@ -56,10 +57,21 @@ namespace Game.Player
         {
             if (!base.IsOwner) return;
             Movement();
+            if (canMove)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
         }
 
         private void Movement()
         {
+            _moveInput = _inputActions.Player.Move.ReadValue<Vector2>();
             isRunning = _inputActions.Player.Sprint.IsPressed();
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
@@ -69,7 +81,7 @@ namespace Game.Player
             _moveDirection = (forward * vertical) + (right * horizontal);
             _moveDirection = Vector3.ClampMagnitude(_moveDirection, (isRunning ? runSpeed : walkSpeed));
             
-            if (_inputActions.Player.Jump.IsPressed() && canMove && _characterController.isGrounded)
+            if (_inputActions.Player.Jump.WasPressedThisFrame() && canMove && _characterController.isGrounded)
             {
                 _moveDirection.y = jumpForce;
             }
