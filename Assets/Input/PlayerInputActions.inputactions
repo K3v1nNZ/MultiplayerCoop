@@ -58,15 +58,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "LockPick",
-                    "type": "Button",
-                    "id": "0d023dbd-1fee-4e89-be1b-ea3f20865f41",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -245,28 +236,6 @@
                     "action": "VoiceChat",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "aabdc81a-0285-4464-b12f-f72679e7924f",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "LockPick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1407e955-2100-4403-bcad-7c00caeb3690",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "LockPick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         },
@@ -341,6 +310,15 @@
                     "name": "RightClick",
                     "type": "PassThrough",
                     "id": "44b200b1-1557-4083-816c-b22cbdf77ddf",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "LockPick",
+                    "type": "Button",
+                    "id": "484129e2-0ba3-44ee-ac5f-1629897d89fa",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -543,6 +521,28 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "RightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b0cf2c7a-6374-4091-86c7-1b5171e8ba0d",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "LockPick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "50dc91b7-8455-474c-bfc1-113841cf056c",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "LockPick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

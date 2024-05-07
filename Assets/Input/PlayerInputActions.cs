@@ -82,15 +82,6 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""LockPick"",
-                    ""type"": ""Button"",
-                    ""id"": ""0d023dbd-1fee-4e89-be1b-ea3f20865f41"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -269,28 +260,6 @@ namespace UnityEngine.InputSystem
                     ""action"": ""VoiceChat"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""aabdc81a-0285-4464-b12f-f72679e7924f"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""LockPick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1407e955-2100-4403-bcad-7c00caeb3690"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""LockPick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -365,6 +334,15 @@ namespace UnityEngine.InputSystem
                     ""name"": ""RightClick"",
                     ""type"": ""PassThrough"",
                     ""id"": ""44b200b1-1557-4083-816c-b22cbdf77ddf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LockPick"",
+                    ""type"": ""Button"",
+                    ""id"": ""484129e2-0ba3-44ee-ac5f-1629897d89fa"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -569,6 +547,28 @@ namespace UnityEngine.InputSystem
                     ""action"": ""RightClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b0cf2c7a-6374-4091-86c7-1b5171e8ba0d"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""LockPick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""50dc91b7-8455-474c-bfc1-113841cf056c"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""LockPick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -611,7 +611,6 @@ namespace UnityEngine.InputSystem
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
             m_Player_VoiceChat = m_Player.FindAction("VoiceChat", throwIfNotFound: true);
-            m_Player_LockPick = m_Player.FindAction("LockPick", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -622,6 +621,7 @@ namespace UnityEngine.InputSystem
             m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
             m_UI_MiddleClick = m_UI.FindAction("MiddleClick", throwIfNotFound: true);
             m_UI_RightClick = m_UI.FindAction("RightClick", throwIfNotFound: true);
+            m_UI_LockPick = m_UI.FindAction("LockPick", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -689,7 +689,6 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Interact;
         private readonly InputAction m_Player_VoiceChat;
-        private readonly InputAction m_Player_LockPick;
         public struct PlayerActions
         {
             private @PlayerInputActions m_Wrapper;
@@ -700,7 +699,6 @@ namespace UnityEngine.InputSystem
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @Interact => m_Wrapper.m_Player_Interact;
             public InputAction @VoiceChat => m_Wrapper.m_Player_VoiceChat;
-            public InputAction @LockPick => m_Wrapper.m_Player_LockPick;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -728,9 +726,6 @@ namespace UnityEngine.InputSystem
                 @VoiceChat.started += instance.OnVoiceChat;
                 @VoiceChat.performed += instance.OnVoiceChat;
                 @VoiceChat.canceled += instance.OnVoiceChat;
-                @LockPick.started += instance.OnLockPick;
-                @LockPick.performed += instance.OnLockPick;
-                @LockPick.canceled += instance.OnLockPick;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -753,9 +748,6 @@ namespace UnityEngine.InputSystem
                 @VoiceChat.started -= instance.OnVoiceChat;
                 @VoiceChat.performed -= instance.OnVoiceChat;
                 @VoiceChat.canceled -= instance.OnVoiceChat;
-                @LockPick.started -= instance.OnLockPick;
-                @LockPick.performed -= instance.OnLockPick;
-                @LockPick.canceled -= instance.OnLockPick;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -785,6 +777,7 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_UI_ScrollWheel;
         private readonly InputAction m_UI_MiddleClick;
         private readonly InputAction m_UI_RightClick;
+        private readonly InputAction m_UI_LockPick;
         public struct UIActions
         {
             private @PlayerInputActions m_Wrapper;
@@ -797,6 +790,7 @@ namespace UnityEngine.InputSystem
             public InputAction @ScrollWheel => m_Wrapper.m_UI_ScrollWheel;
             public InputAction @MiddleClick => m_Wrapper.m_UI_MiddleClick;
             public InputAction @RightClick => m_Wrapper.m_UI_RightClick;
+            public InputAction @LockPick => m_Wrapper.m_UI_LockPick;
             public InputActionMap Get() { return m_Wrapper.m_UI; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -830,6 +824,9 @@ namespace UnityEngine.InputSystem
                 @RightClick.started += instance.OnRightClick;
                 @RightClick.performed += instance.OnRightClick;
                 @RightClick.canceled += instance.OnRightClick;
+                @LockPick.started += instance.OnLockPick;
+                @LockPick.performed += instance.OnLockPick;
+                @LockPick.canceled += instance.OnLockPick;
             }
 
             private void UnregisterCallbacks(IUIActions instance)
@@ -858,6 +855,9 @@ namespace UnityEngine.InputSystem
                 @RightClick.started -= instance.OnRightClick;
                 @RightClick.performed -= instance.OnRightClick;
                 @RightClick.canceled -= instance.OnRightClick;
+                @LockPick.started -= instance.OnLockPick;
+                @LockPick.performed -= instance.OnLockPick;
+                @LockPick.canceled -= instance.OnLockPick;
             }
 
             public void RemoveCallbacks(IUIActions instance)
@@ -901,7 +901,6 @@ namespace UnityEngine.InputSystem
             void OnJump(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
             void OnVoiceChat(InputAction.CallbackContext context);
-            void OnLockPick(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {
@@ -913,6 +912,7 @@ namespace UnityEngine.InputSystem
             void OnScrollWheel(InputAction.CallbackContext context);
             void OnMiddleClick(InputAction.CallbackContext context);
             void OnRightClick(InputAction.CallbackContext context);
+            void OnLockPick(InputAction.CallbackContext context);
         }
     }
 }

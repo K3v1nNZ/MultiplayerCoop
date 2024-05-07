@@ -15,6 +15,7 @@ namespace Game.Player
         [SerializeField] private GameObject firstPersonAssets;
         [SerializeField] private GameObject thirdPersonAssets;
         [HideInInspector] public bool canMove = true;
+        [HideInInspector] public bool canInteract = true;
         [HideInInspector] public bool isRunning;
         private CharacterController _characterController;
         private PlayerInputActions _inputActions;

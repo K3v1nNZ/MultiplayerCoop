@@ -24,6 +24,7 @@ namespace Game.Environment
         {
             _inputActions = PlayerInputManager.Instance.PlayerInputActions;
             PlayerController.Instance.canMove = false;
+            PlayerController.Instance.canInteract = false;
             for (int i = 0; i < pins; i++)
             {
                 GameObject pin = Instantiate(pinPrefab, transform);
@@ -39,7 +40,7 @@ namespace Game.Environment
 
         private void Update()
         {
-            if (_inputActions.Player.LockPick.WasPressedThisFrame())
+            if (_inputActions.UI.LockPick.WasPressedThisFrame())
             {
                 _pins[_activePin].indicator.DOKill();
                 PinCheck();
@@ -48,6 +49,7 @@ namespace Game.Environment
             if (!door.IsLocked.Value)
             {
                 PlayerController.Instance.canMove = true;
+                PlayerController.Instance.canInteract = true;
                 Destroy(gameObject);
             }
         }
@@ -66,12 +68,14 @@ namespace Game.Environment
                 {
                     door.IsLocked.Value = false;
                     PlayerController.Instance.canMove = true;
+                    PlayerController.Instance.canInteract = true;
                     Destroy(gameObject);
                 }
             }
             else
             {
                 PlayerController.Instance.canMove = true;
+                PlayerController.Instance.canInteract = true;
                 Destroy(gameObject);
             }
         }

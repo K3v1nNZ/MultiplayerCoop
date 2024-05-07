@@ -10,7 +10,7 @@ namespace Game.Player
         private void Update()
         {
             Ray ray = new(transform.position, transform.forward);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, interactRange))
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, interactRange) && PlayerController.Instance.canInteract)
             {
                 if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactableObj))
                 {
