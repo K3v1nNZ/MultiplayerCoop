@@ -2,6 +2,7 @@
   "dependencies": {
     "com.deltation.toon-rp": "https://github.com/Delt06/toon-rp.git?path=Packages/com.deltation.toon-rp#unity-2021-3",
     "com.github.superunitybuild.buildtool": "7.0.0",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.collab-proxy": "2.2.0",
     "com.unity.feature.development": "1.0.1",
     "com.unity.ide.rider": "3.0.28",
