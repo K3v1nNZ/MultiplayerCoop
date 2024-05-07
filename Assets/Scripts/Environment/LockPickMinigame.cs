@@ -40,6 +40,14 @@ namespace Game.Environment
 
         private void Update()
         {
+            if (_inputActions.UI.Cancel.WasPressedThisFrame())
+            {
+                PlayerController.Instance.canMove = true;
+                PlayerController.Instance.canInteract = true;
+                _pins[_activePin].indicator.DOKill();
+                Destroy(gameObject);
+            }
+            
             if (_inputActions.UI.LockPick.WasPressedThisFrame())
             {
                 _pins[_activePin].indicator.DOKill();
