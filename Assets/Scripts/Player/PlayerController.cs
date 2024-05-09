@@ -46,6 +46,24 @@ namespace Game.Player
                 _characterController = GetComponent<CharacterController>();
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                switch (playerRole)
+                {
+                    case PlayerRole.Assassin:
+                        HUDController.Instance.SetRole("Assassin");
+                        break;
+                    case PlayerRole.Informant:
+                        HUDController.Instance.SetRole("Informant");
+                        break;
+                    case PlayerRole.Infiltrator:
+                        HUDController.Instance.SetRole("Infiltrator");
+                        break;
+                    case PlayerRole.Hacker:
+                        HUDController.Instance.SetRole("Hacker");
+                        break;
+                    default:
+                        HUDController.Instance.SetRole("Unknown");
+                        break;
+                }
             }
             else
             {
@@ -57,6 +75,7 @@ namespace Game.Player
         private void Update()
         {
             if (!base.IsOwner) return;
+            Debug.Log(_characterController.isGrounded);
             Movement();
             if (canMove)
             {
@@ -94,6 +113,11 @@ namespace Game.Player
             if (!_characterController.isGrounded)
             {
                 _moveDirection.y -= gravity * Time.deltaTime;
+            }
+            
+            if (_characterController.isGrounded && _moveDirection.y < 0)
+            {
+                _moveDirection.y = -0.5f;
             }
             
             _characterController.Move(_moveDirection * Time.deltaTime);
