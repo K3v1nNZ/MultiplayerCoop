@@ -19,7 +19,7 @@ namespace Game.Player
         [HideInInspector] public bool isRunning;
         private CharacterController _characterController;
         private PlayerInputActions _inputActions;
-        private Camera playerCamera;
+        private Transform playerCamera;
         private Vector3 _moveDirection;
         private Vector2 _moveInput;
         private float _rotationY;
@@ -38,7 +38,7 @@ namespace Game.Player
             {
                 Instance = this;
                 _inputActions = PlayerInputManager.Instance.PlayerInputActions;
-                playerCamera = Camera.main;
+                playerCamera = Camera.main.transform.parent;
                 playerCamera.transform.SetParent(transform);
                 playerCamera.transform.localPosition = new Vector3(0f, 0.725f, 0f);
                 firstPersonAssets.SetActive(true);
@@ -75,7 +75,6 @@ namespace Game.Player
         private void Update()
         {
             if (!base.IsOwner) return;
-            Debug.Log(_characterController.isGrounded);
             Movement();
             if (canMove)
             {

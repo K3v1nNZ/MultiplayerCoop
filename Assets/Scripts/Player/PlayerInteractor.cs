@@ -17,7 +17,7 @@ namespace Game.Player
                     interactPrompt.SetActive(true);
                     if (PlayerInputManager.Instance.PlayerInputActions.Player.Interact.WasPressedThisFrame())
                     {
-                        interactableObj.Interact(transform.parent.GetComponent<PlayerController>());
+                        interactableObj.Interact(PlayerController.Instance);
                     }
                 }
                 else

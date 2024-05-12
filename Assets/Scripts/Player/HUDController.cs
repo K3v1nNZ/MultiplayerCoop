@@ -30,7 +30,7 @@ namespace Game.Player
             timerText.text = $"{time.Minutes:D2}:{time.Seconds:D2}";
         }
 
-        public void SetRole(String role)
+        public void SetRole(string role)
         {
             roleText.text = role;
         }
