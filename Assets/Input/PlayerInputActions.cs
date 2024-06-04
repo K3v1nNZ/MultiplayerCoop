@@ -82,6 +82,24 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ItemPrimary"",
+                    ""type"": ""Button"",
+                    ""id"": ""ea4bbc3c-2531-45d9-865b-28a94244e17c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ItemSecondary"",
+                    ""type"": ""Button"",
+                    ""id"": ""e043c061-52c3-4bd9-b7bb-45d4ecfdd41d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -258,6 +276,50 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""VoiceChat"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dc71a61b-c82d-4b69-a9a8-6cf849cb1868"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ItemPrimary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""82c6a77f-a649-4835-ac45-1c61b1084d5c"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ItemPrimary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d79ed30e-b0b5-4705-921a-07c6fd9a925b"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ItemSecondary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0d2f3555-3753-49be-b8d8-40886436a549"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ItemSecondary"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -611,6 +673,8 @@ namespace UnityEngine.InputSystem
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
             m_Player_VoiceChat = m_Player.FindAction("VoiceChat", throwIfNotFound: true);
+            m_Player_ItemPrimary = m_Player.FindAction("ItemPrimary", throwIfNotFound: true);
+            m_Player_ItemSecondary = m_Player.FindAction("ItemSecondary", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -689,6 +753,8 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Interact;
         private readonly InputAction m_Player_VoiceChat;
+        private readonly InputAction m_Player_ItemPrimary;
+        private readonly InputAction m_Player_ItemSecondary;
         public struct PlayerActions
         {
             private @PlayerInputActions m_Wrapper;
@@ -699,6 +765,8 @@ namespace UnityEngine.InputSystem
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @Interact => m_Wrapper.m_Player_Interact;
             public InputAction @VoiceChat => m_Wrapper.m_Player_VoiceChat;
+            public InputAction @ItemPrimary => m_Wrapper.m_Player_ItemPrimary;
+            public InputAction @ItemSecondary => m_Wrapper.m_Player_ItemSecondary;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -726,6 +794,12 @@ namespace UnityEngine.InputSystem
                 @VoiceChat.started += instance.OnVoiceChat;
                 @VoiceChat.performed += instance.OnVoiceChat;
                 @VoiceChat.canceled += instance.OnVoiceChat;
+                @ItemPrimary.started += instance.OnItemPrimary;
+                @ItemPrimary.performed += instance.OnItemPrimary;
+                @ItemPrimary.canceled += instance.OnItemPrimary;
+                @ItemSecondary.started += instance.OnItemSecondary;
+                @ItemSecondary.performed += instance.OnItemSecondary;
+                @ItemSecondary.canceled += instance.OnItemSecondary;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -748,6 +822,12 @@ namespace UnityEngine.InputSystem
                 @VoiceChat.started -= instance.OnVoiceChat;
                 @VoiceChat.performed -= instance.OnVoiceChat;
                 @VoiceChat.canceled -= instance.OnVoiceChat;
+                @ItemPrimary.started -= instance.OnItemPrimary;
+                @ItemPrimary.performed -= instance.OnItemPrimary;
+                @ItemPrimary.canceled -= instance.OnItemPrimary;
+                @ItemSecondary.started -= instance.OnItemSecondary;
+                @ItemSecondary.performed -= instance.OnItemSecondary;
+                @ItemSecondary.canceled -= instance.OnItemSecondary;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -901,6 +981,8 @@ namespace UnityEngine.InputSystem
             void OnJump(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
             void OnVoiceChat(InputAction.CallbackContext context);
+            void OnItemPrimary(InputAction.CallbackContext context);
+            void OnItemSecondary(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

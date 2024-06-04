@@ -23,7 +23,7 @@ MonoBehaviour:
       StencilLayer: 0
       Color: {r: 0, g: 0, b: 0, a: 1}
       Thickness: 0.005
-      FixedScreenSpaceThickness: 0
+      FixedScreenSpaceThickness: 1
       NoiseAmplitude: 0
       NoiseFrequency: 0
       NormalsSource: 0
