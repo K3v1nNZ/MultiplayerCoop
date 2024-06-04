@@ -9,6 +9,7 @@ namespace Game.Player
         public static HUDController Instance;
         [SerializeField] private TMP_Text timerText;
         [SerializeField] private TMP_Text roleText;
+        [SerializeField] private TMP_Text ammoText;
         private float _timeSpan;
 
         private void Awake()
@@ -28,6 +29,7 @@ namespace Game.Player
             _timeSpan += Time.deltaTime;
             TimeSpan time = TimeSpan.FromSeconds(_timeSpan);
             timerText.text = $"{time.Minutes:D2}:{time.Seconds:D2}";
+            ammoText.text = PlayerController.Instance.currentAmmo.ToString();
         }
 
         public void SetRole(string role)

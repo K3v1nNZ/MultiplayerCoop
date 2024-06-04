@@ -100,6 +100,15 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ItemReload"",
+                    ""type"": ""Button"",
+                    ""id"": ""bbfc294a-4a8b-4c4d-9331-2d837fc0a755"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -320,6 +329,28 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""ItemSecondary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7b19f52e-03d1-4fc2-8de2-8b398fe10ead"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ItemReload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""15f1af41-8e7c-4045-9372-652bdb9a6a44"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ItemReload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -675,6 +706,7 @@ namespace UnityEngine.InputSystem
             m_Player_VoiceChat = m_Player.FindAction("VoiceChat", throwIfNotFound: true);
             m_Player_ItemPrimary = m_Player.FindAction("ItemPrimary", throwIfNotFound: true);
             m_Player_ItemSecondary = m_Player.FindAction("ItemSecondary", throwIfNotFound: true);
+            m_Player_ItemReload = m_Player.FindAction("ItemReload", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -755,6 +787,7 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_VoiceChat;
         private readonly InputAction m_Player_ItemPrimary;
         private readonly InputAction m_Player_ItemSecondary;
+        private readonly InputAction m_Player_ItemReload;
         public struct PlayerActions
         {
             private @PlayerInputActions m_Wrapper;
@@ -767,6 +800,7 @@ namespace UnityEngine.InputSystem
             public InputAction @VoiceChat => m_Wrapper.m_Player_VoiceChat;
             public InputAction @ItemPrimary => m_Wrapper.m_Player_ItemPrimary;
             public InputAction @ItemSecondary => m_Wrapper.m_Player_ItemSecondary;
+            public InputAction @ItemReload => m_Wrapper.m_Player_ItemReload;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -800,6 +834,9 @@ namespace UnityEngine.InputSystem
                 @ItemSecondary.started += instance.OnItemSecondary;
                 @ItemSecondary.performed += instance.OnItemSecondary;
                 @ItemSecondary.canceled += instance.OnItemSecondary;
+                @ItemReload.started += instance.OnItemReload;
+                @ItemReload.performed += instance.OnItemReload;
+                @ItemReload.canceled += instance.OnItemReload;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -828,6 +865,9 @@ namespace UnityEngine.InputSystem
                 @ItemSecondary.started -= instance.OnItemSecondary;
                 @ItemSecondary.performed -= instance.OnItemSecondary;
                 @ItemSecondary.canceled -= instance.OnItemSecondary;
+                @ItemReload.started -= instance.OnItemReload;
+                @ItemReload.performed -= instance.OnItemReload;
+                @ItemReload.canceled -= instance.OnItemReload;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -983,6 +1023,7 @@ namespace UnityEngine.InputSystem
             void OnVoiceChat(InputAction.CallbackContext context);
             void OnItemPrimary(InputAction.CallbackContext context);
             void OnItemSecondary(InputAction.CallbackContext context);
+            void OnItemReload(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

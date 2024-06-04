@@ -20,6 +20,7 @@ namespace Game.Player
         [HideInInspector] public bool canShoot = true;
         [HideInInspector] public bool canInteract = true;
         [HideInInspector] public bool isRunning;
+        public int currentAmmo;
         private CharacterController _characterController;
         private PlayerInputActions _inputActions;
         private Transform _playerCamera;
@@ -28,7 +29,6 @@ namespace Game.Player
         private float _rotationY;
         private float _reloadTime;
         private float _fireRateTime;
-        private int _currentAmmo;
         private WeaponScriptableObject _previousWeapon;
         public WeaponScriptableObject currentWeapon;
         public PlayerRole playerRole;
@@ -53,6 +53,7 @@ namespace Game.Player
                 thirdPersonAssets.SetActive(false);
                 firstPersonAssets.transform.parent = _playerCamera;
                 _characterController = GetComponent<CharacterController>();
+                currentAmmo = currentWeapon.clipSize;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
                 switch (playerRole)
@@ -104,6 +105,10 @@ namespace Game.Player
             if (_reloadTime > 0)
             {
                 _reloadTime -= Time.deltaTime;
+                if (_reloadTime <= 0)
+                {
+                    currentAmmo = currentWeapon.clipSize;
+                }
             }
             if (_fireRateTime > 0)
             {
@@ -115,12 +120,18 @@ namespace Game.Player
                 {
                     Destroy(child.gameObject);
                 }
-                GameObject weaponModel = Instantiate(currentWeapon.weaponModel, gunObjectViewmodel.transform);
+                Instantiate(currentWeapon.weaponModel, gunObjectViewmodel.transform);
                 _reloadTime = 0;
                 _fireRateTime = 0;
                 _previousWeapon = currentWeapon;
             }
-            if (_fireRateTime > 0 || _reloadTime > 0) return;
+            
+            if (_inputActions.Player.ItemReload.WasPressedThisFrame() && _reloadTime <= 0 && currentAmmo < currentWeapon.clipSize)
+            {
+                _reloadTime = currentWeapon.reloadTime;
+            }
+            
+            if (_fireRateTime > 0 || _reloadTime > 0 || currentAmmo <= 0) return;
             
             switch (currentWeapon.weaponType)
             {
@@ -130,12 +141,22 @@ namespace Game.Player
                     if (currentWeapon.fireMode == WeaponScriptableObject.FireMode.Single && _inputActions.Player.ItemPrimary.WasPressedThisFrame() && _fireRateTime <= 0)
                     {
                         ShootBullet();
-                        _fireRateTime = 1 / currentWeapon.fireRate;
+                        currentAmmo--;
+                        _fireRateTime = currentWeapon.fireRate;
+                        if (currentAmmo <= 0)
+                        {
+                            _reloadTime = currentWeapon.reloadTime;
+                        }
                     }
                     else if (currentWeapon.fireMode == WeaponScriptableObject.FireMode.Automatic && _inputActions.Player.ItemPrimary.IsPressed() && _fireRateTime <= 0)
                     {
                         ShootBullet();
-                        _fireRateTime = 1 / currentWeapon.fireRate;
+                        currentAmmo--;
+                        _fireRateTime = currentWeapon.fireRate;
+                        if (currentAmmo <= 0)
+                        {
+                            _reloadTime = currentWeapon.reloadTime;
+                        }
                     }
                     break;
                 case WeaponScriptableObject.WeaponType.Melee:
