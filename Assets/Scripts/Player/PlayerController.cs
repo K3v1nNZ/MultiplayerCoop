@@ -1,5 +1,7 @@
 using System;
+using DG.Tweening;
 using FishNet.Object;
+using FishNet.Transporting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -29,6 +31,7 @@ namespace Game.Player
         private float _rotationY;
         private float _reloadTime;
         private float _fireRateTime;
+        private Transform _gunBarrelEnd;
         private WeaponScriptableObject _previousWeapon;
         public WeaponScriptableObject currentWeapon;
         public PlayerRole playerRole;
@@ -120,11 +123,14 @@ namespace Game.Player
                 {
                     Destroy(child.gameObject);
                 }
-                Instantiate(currentWeapon.weaponModel, gunObjectViewmodel.transform);
+                GameObject model = Instantiate(currentWeapon.weaponModel, gunObjectViewmodel.transform);
                 _reloadTime = 0;
                 _fireRateTime = 0;
                 _previousWeapon = currentWeapon;
+                _gunBarrelEnd = model.transform.Find("Model").Find("BarrelEnd");
             }
+            
+            if (!canShoot) return;
             
             if (_inputActions.Player.ItemReload.WasPressedThisFrame() && _reloadTime <= 0 && currentAmmo < currentWeapon.clipSize)
             {
@@ -167,13 +173,18 @@ namespace Game.Player
             }
         }
 
-        private void ShootBullet()
+        [ObserversRpc]
+        private void ShootBullet(Channel channel = Channel.Unreliable)
         {
+            Debug.Log("Shot from " + base.Owner.ClientId);
             RaycastHit hit;
             if (Physics.Raycast(_playerCamera.position, _playerCamera.forward, out hit, 100f) && hit.collider.gameObject.TryGetComponent(out IShootable shootableObj))
             {
                 shootableObj.Shoot(this);
             }
+            GameObject bulletTrail = Instantiate(currentWeapon.bulletTrail, _gunBarrelEnd.position, Quaternion.identity);
+            bulletTrail.transform.LookAt(hit.point);
+            bulletTrail.transform.DOMove(hit.point, 0.1f).SetEase(Ease.Linear).OnComplete(() => Destroy(bulletTrail));
         }
 
         private void Movement()

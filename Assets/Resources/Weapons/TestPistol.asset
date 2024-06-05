@@ -20,5 +20,6 @@ MonoBehaviour:
   clipSize: 12
   reloadTime: 1.5
   weaponModel: {fileID: 6076298049976506902, guid: 66074ff7a9b217b4c89c1a65abc1da5c, type: 3}
+  bulletTrail: {fileID: 7162034703808800142, guid: 7f96db6f26187374f881dcde746cd506, type: 3}
   fireSound: {fileID: 0}
   reloadSound: {fileID: 0}
