@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using FishNet.Object;
 using FishNet.Transporting;
@@ -16,8 +15,10 @@ namespace Game.Player
         [SerializeField] private float gravity;
         [SerializeField] private float mouseSensitivity;
         [SerializeField] private GameObject gunObjectViewmodel;
+        [SerializeField] private GameObject thirdPersonGunObject;
         [SerializeField] private GameObject firstPersonAssets;
         [SerializeField] private GameObject thirdPersonAssets;
+        [SerializeField] private GameObject bulletTrailObject;
         [HideInInspector] public bool canMove = true;
         [HideInInspector] public bool canShoot = true;
         [HideInInspector] public bool canInteract = true;
@@ -32,6 +33,7 @@ namespace Game.Player
         private float _reloadTime;
         private float _fireRateTime;
         private Transform _gunBarrelEnd;
+        private Transform _gunBarrelEndThirdPerson;
         private WeaponScriptableObject _previousWeapon;
         public WeaponScriptableObject currentWeapon;
         public PlayerRole playerRole;
@@ -102,6 +104,27 @@ namespace Game.Player
             }
         }
 
+        [ObserversRpc]
+        private void WeaponChange()
+        {
+            foreach (Transform child in gunObjectViewmodel.transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            foreach (Transform child in thirdPersonGunObject.transform)
+            {
+                Destroy(child.gameObject);
+            }
+            GameObject model = Instantiate(currentWeapon.weaponModel, gunObjectViewmodel.transform);
+            GameObject thirdPersonModel = Instantiate(currentWeapon.thirdPersonModel, thirdPersonGunObject.transform);
+            _reloadTime = 0;
+            _fireRateTime = 0;
+            _previousWeapon = currentWeapon;
+            _gunBarrelEnd = model.transform.Find("Model").Find("BarrelEnd");
+            _gunBarrelEndThirdPerson = thirdPersonModel.transform.Find("Model").Find("BarrelEnd");
+        }
+        
         private void EquippedWeapon()
         {
             if (currentWeapon == null) return;
@@ -119,15 +142,7 @@ namespace Game.Player
             }
             if (_previousWeapon != currentWeapon)
             {
-                foreach (Transform child in gunObjectViewmodel.transform)
-                {
-                    Destroy(child.gameObject);
-                }
-                GameObject model = Instantiate(currentWeapon.weaponModel, gunObjectViewmodel.transform);
-                _reloadTime = 0;
-                _fireRateTime = 0;
-                _previousWeapon = currentWeapon;
-                _gunBarrelEnd = model.transform.Find("Model").Find("BarrelEnd");
+                WeaponChange();
             }
             
             if (!canShoot) return;
@@ -146,7 +161,7 @@ namespace Game.Player
                 case WeaponScriptableObject.WeaponType.Ranged:
                     if (currentWeapon.fireMode == WeaponScriptableObject.FireMode.Single && _inputActions.Player.ItemPrimary.WasPressedThisFrame() && _fireRateTime <= 0)
                     {
-                        ShootBullet();
+                        ShootBullet(_playerCamera.position, _playerCamera.forward);
                         currentAmmo--;
                         _fireRateTime = currentWeapon.fireRate;
                         if (currentAmmo <= 0)
@@ -156,7 +171,7 @@ namespace Game.Player
                     }
                     else if (currentWeapon.fireMode == WeaponScriptableObject.FireMode.Automatic && _inputActions.Player.ItemPrimary.IsPressed() && _fireRateTime <= 0)
                     {
-                        ShootBullet();
+                        ShootBullet(_playerCamera.position, _playerCamera.forward);
                         currentAmmo--;
                         _fireRateTime = currentWeapon.fireRate;
                         if (currentAmmo <= 0)
@@ -172,19 +187,22 @@ namespace Game.Player
                     return;
             }
         }
-
+        
         [ObserversRpc]
-        private void ShootBullet(Channel channel = Channel.Unreliable)
+        private void ShootBullet(Vector3 rayOriginPosition, Vector3 rayOriginForward, Channel channel = Channel.Unreliable)
         {
             Debug.Log("Shot from " + base.Owner.ClientId);
-            RaycastHit hit;
-            if (Physics.Raycast(_playerCamera.position, _playerCamera.forward, out hit, 100f) && hit.collider.gameObject.TryGetComponent(out IShootable shootableObj))
+            if (Physics.Raycast(rayOriginPosition, rayOriginForward, out RaycastHit hit, 100f))
             {
-                shootableObj.Shoot(this);
+                if (hit.collider.gameObject.TryGetComponent(out IShootable shootableObj) && base.IsOwner)
+                {
+                    shootableObj.Shoot(this);   
+                }
             }
-            GameObject bulletTrail = Instantiate(currentWeapon.bulletTrail, _gunBarrelEnd.position, Quaternion.identity);
+
+            GameObject bulletTrail = Instantiate(bulletTrailObject, base.IsOwner ? _gunBarrelEnd.position : _gunBarrelEndThirdPerson.position, Quaternion.identity);
             bulletTrail.transform.LookAt(hit.point);
-            bulletTrail.transform.DOMove(hit.point, 0.1f).SetEase(Ease.Linear).OnComplete(() => Destroy(bulletTrail));
+            bulletTrail.transform.DOMove(hit.point, 0.075f).SetEase(Ease.Linear).OnComplete(() => Destroy(bulletTrail));
         }
 
         private void Movement()

@@ -12,7 +12,8 @@ namespace Game.Player
         public float fireRate;
         public int clipSize;
         public float reloadTime;
-        public GameObject weaponModel; 
+        public GameObject weaponModel;
+        public GameObject thirdPersonModel;
         public GameObject bulletTrail;
         public AudioClip fireSound;
         public AudioClip reloadSound;
