@@ -137,7 +137,7 @@ PlayerSettings:
     16:10: 0
     16:9: 1
     Others: 0
-  bundleVersion: 0.0.1.32
+  bundleVersion: 
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -160,11 +160,11 @@ PlayerSettings:
   applicationIdentifier:
     Standalone: com.K3v1nNZ.MultiplayerCoop
   buildNumber:
-    Standalone: 84
-    iPhone: 84
+    Standalone: 121
+    iPhone: 121
     tvOS: 0
   overrideDefaultApplicationIdentifier: 1
-  AndroidBundleVersionCode: 85
+  AndroidBundleVersionCode: 122
   AndroidMinSdkVersion: 22
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1

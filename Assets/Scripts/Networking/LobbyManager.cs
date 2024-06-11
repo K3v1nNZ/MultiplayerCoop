@@ -141,6 +141,8 @@ namespace Game.Networking
             if (lobby.GetData("Version") != Application.version)
             {
                 Debug.LogError("Version mismatch.");
+                Debug.Log(Application.version);
+                Debug.Log(lobby.GetData("Version"));
                 return;
             }
             LeaveLobby();
@@ -196,6 +198,8 @@ namespace Game.Networking
                     if (lobby.GetData("Version") != Application.version)
                     {
                         Debug.Log("Version mismatch.");
+                        Debug.Log(Application.version);
+                        Debug.Log(lobby.GetData("Version"));
                         inLobby = false;
                         continue;
                     }
