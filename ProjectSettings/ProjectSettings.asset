@@ -160,11 +160,11 @@ PlayerSettings:
   applicationIdentifier:
     Standalone: com.K3v1nNZ.MultiplayerCoop
   buildNumber:
-    Standalone: 121
-    iPhone: 121
+    Standalone: 122
+    iPhone: 122
     tvOS: 0
   overrideDefaultApplicationIdentifier: 1
-  AndroidBundleVersionCode: 122
+  AndroidBundleVersionCode: 123
   AndroidMinSdkVersion: 22
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1

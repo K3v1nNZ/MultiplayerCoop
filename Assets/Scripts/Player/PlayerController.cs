@@ -104,6 +104,12 @@ namespace Game.Player
             }
         }
 
+        [ServerRpc]
+        private void ServerWeaponChange()
+        {
+            WeaponChange();
+        }
+        
         [ObserversRpc]
         private void WeaponChange()
         {
@@ -120,7 +126,6 @@ namespace Game.Player
             GameObject thirdPersonModel = Instantiate(currentWeapon.thirdPersonModel, thirdPersonGunObject.transform);
             _reloadTime = 0;
             _fireRateTime = 0;
-            _previousWeapon = currentWeapon;
             _gunBarrelEnd = model.transform.Find("Model").Find("BarrelEnd");
             _gunBarrelEndThirdPerson = thirdPersonModel.transform.Find("Model").Find("BarrelEnd");
         }
@@ -142,7 +147,8 @@ namespace Game.Player
             }
             if (_previousWeapon != currentWeapon)
             {
-                WeaponChange();
+                _previousWeapon = currentWeapon;
+                ServerWeaponChange();
             }
             
             if (!canShoot) return;
@@ -161,7 +167,7 @@ namespace Game.Player
                 case WeaponScriptableObject.WeaponType.Ranged:
                     if (currentWeapon.fireMode == WeaponScriptableObject.FireMode.Single && _inputActions.Player.ItemPrimary.WasPressedThisFrame() && _fireRateTime <= 0)
                     {
-                        ShootBullet(_playerCamera.position, _playerCamera.forward);
+                        ServerShootBullet(_playerCamera.position, _playerCamera.forward);
                         currentAmmo--;
                         _fireRateTime = currentWeapon.fireRate;
                         if (currentAmmo <= 0)
@@ -171,7 +177,7 @@ namespace Game.Player
                     }
                     else if (currentWeapon.fireMode == WeaponScriptableObject.FireMode.Automatic && _inputActions.Player.ItemPrimary.IsPressed() && _fireRateTime <= 0)
                     {
-                        ShootBullet(_playerCamera.position, _playerCamera.forward);
+                        ServerShootBullet(_playerCamera.position, _playerCamera.forward);
                         currentAmmo--;
                         _fireRateTime = currentWeapon.fireRate;
                         if (currentAmmo <= 0)
@@ -186,6 +192,12 @@ namespace Game.Player
                     Debug.Log("Unknown weapon type equipped");
                     return;
             }
+        }
+
+        [ServerRpc]
+        private void ServerShootBullet(Vector3 rayOriginPosition, Vector3 rayOriginForward, Channel channel = Channel.Unreliable)
+        {
+            ShootBullet(rayOriginPosition, rayOriginForward, channel);
         }
         
         [ObserversRpc]
