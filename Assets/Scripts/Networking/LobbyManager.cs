@@ -138,17 +138,18 @@ namespace Game.Networking
                 Debug.LogError("Lobby is full.");
                 return;
             }
-            if (lobby.GetData("Version") != Application.version)
-            {
-                Debug.LogError("Version mismatch.");
-                Debug.Log(Application.version);
-                Debug.Log(lobby.GetData("Version"));
-                return;
-            }
             LeaveLobby();
             RoomEnter result = await lobby.Join();
             if (result == RoomEnter.Success)
             {
+                if (lobby.GetData("Version") != Application.version)
+                {
+                    Debug.LogError("Version mismatch.");
+                    Debug.Log(Application.version);
+                    Debug.Log(lobby.GetData("Version"));
+                    LeaveLobby();
+                    return;
+                }
                 InstanceFinder.ClientManager.StartConnection(lobby.Owner.Id.ToString());
             }
         }
