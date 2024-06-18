@@ -1,6 +1,9 @@
 using DG.Tweening;
+using FishNet.Connection;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using FishNet.Transporting;
+using Game.Networking;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,6 +35,7 @@ namespace Game.Player
         private float _rotationY;
         private float _reloadTime;
         private float _fireRateTime;
+        private bool _hasRole;
         private Transform _gunBarrelEnd;
         private Transform _gunBarrelEndThirdPerson;
         private WeaponScriptableObject _previousWeapon;
@@ -61,24 +65,6 @@ namespace Game.Player
                 currentAmmo = currentWeapon.clipSize;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-                switch (playerRole)
-                {
-                    case PlayerRole.Assassin:
-                        HUDController.Instance.SetRole("Assassin");
-                        break;
-                    case PlayerRole.Informant:
-                        HUDController.Instance.SetRole("Informant");
-                        break;
-                    case PlayerRole.Infiltrator:
-                        HUDController.Instance.SetRole("Infiltrator");
-                        break;
-                    case PlayerRole.Hacker:
-                        HUDController.Instance.SetRole("Hacker");
-                        break;
-                    default:
-                        HUDController.Instance.SetRole("Unknown");
-                        break;
-                }
             }
             else
             {
@@ -87,9 +73,41 @@ namespace Game.Player
             }
         }
 
+        [TargetRpc]
+        public void SetRoleData(NetworkConnection conn, PlayerRole role)
+        {
+            if (!base.IsOwner) return;
+            Debug.LogError("Piss2");
+            playerRole = role;
+            Debug.LogError(playerRole);
+            switch (playerRole)
+            {
+                case PlayerRole.Assassin:
+                    HUDController.Instance.SetRole("Assassin");
+                    break;
+                case PlayerRole.Informant:
+                    HUDController.Instance.SetRole("Informant");
+                    break;
+                case PlayerRole.Infiltrator:
+                    HUDController.Instance.SetRole("Infiltrator");
+                    break;
+                case PlayerRole.Hacker:
+                    HUDController.Instance.SetRole("Hacker");
+                    break;
+                default:
+                    HUDController.Instance.SetRole("Unknown");
+                    break;
+            }
+        }
+        
         private void Update()
         {
             if (!base.IsOwner) return;
+            if (!_hasRole && base.IsClientInitialized)
+            {
+                SpawnerManager.Instance.GiveRole(base.Owner);
+                _hasRole = true;
+            }
             Movement();
             EquippedWeapon();
             if (canMove)

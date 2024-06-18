@@ -2,35 +2,45 @@
 using GameKit.Dependencies.Utilities;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace FishNet.Object.Prediction
 {
     /// <summary>
     /// Data to be used to configure smoothing for an owned predicted object.
     /// </summary>
+    [Preserve]
     internal struct MoveRates
     {
         public float Position;
         public float Rotation;
         public float Scale;
+        public float TimeRemaining;
 
-        public MoveRates(float value)
+        public MoveRates(float value) : this()
         {
             Position = value;
             Rotation = value;
             Scale = value;
         }
-        public MoveRates(float position, float rotation)
+        public MoveRates(float position, float rotation) : this()
         {
             Position = position;
             Rotation = rotation;
             Scale = MoveRatesCls.INSTANT_VALUE;
         }
-        public MoveRates(float position, float rotation, float scale)
+        public MoveRates(float position, float rotation, float scale) : this()
         {
             Position = position;
             Rotation = rotation;
             Scale = scale;
+        }
+        public MoveRates(float position, float rotation, float scale, float timeRemaining)
+        {
+            Position = position;
+            Rotation = rotation;
+            Scale = scale;
+            TimeRemaining = timeRemaining;
         }
 
         /// <summary>
@@ -129,6 +139,15 @@ namespace FishNet.Object.Prediction
         /// Returns a new MoveRates based on previous values, and a transforms current position.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static MoveRates GetMoveRates(TransformProperties prevValues, TransformProperties nextValues, float duration, float teleportThreshold)
+        {
+            return GetMoveRates(prevValues.Position, nextValues.Position, prevValues.Rotation, nextValues.Rotation, prevValues.LocalScale, nextValues.LocalScale, duration, teleportThreshold);
+        }
+
+        /// <summary>
+        /// Returns a new MoveRates based on previous values, and a transforms current position.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MoveRates GetMoveRates(Vector3 fromPosition, Vector3 toPosition, Quaternion fromRotation, Quaternion toRotation, Vector3 fromScale, Vector3 toScale, float duration, float teleportThreshold)
         {
             float rate;
@@ -190,8 +209,6 @@ namespace FishNet.Object.Prediction
             return rotationRate;
         }
 
-
-
         /// <summary>
         /// Moves transform to target values.
         /// </summary>
@@ -203,8 +220,8 @@ namespace FishNet.Object.Prediction
                 return;
 
             MoveRatesCls.MoveLocalToTarget(movingTransform, goalProperties.Position, Position, goalProperties.Rotation, Rotation, goalProperties.LocalScale, Scale, delta);
+            TimeRemaining -= delta;
         }
-
 
         /// <summary>
         /// Moves transform to target values.
@@ -217,6 +234,20 @@ namespace FishNet.Object.Prediction
                 return;
 
             MoveRatesCls.MoveWorldToTarget(movingTransform, goalProperties.Position, Position, goalProperties.Rotation, Rotation, goalProperties.LocalScale, Scale, delta);
+            TimeRemaining -= delta;
+        }
+        /// <summary>
+        /// Moves transform to target values.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void MoveWorldToTarget(Transform movingTransform, TransformProperties goalProperties, TransformPropertiesFlag movedProperties, float delta)
+        {
+            //No rates are set.
+            if (!AnySet)
+                return;
+
+            MoveRatesCls.MoveWorldToTarget(movingTransform, movedProperties, goalProperties.Position, Position, goalProperties.Rotation, Rotation, goalProperties.LocalScale, Scale, delta);
+            TimeRemaining -= delta;
         }
     }
 
@@ -229,6 +260,7 @@ namespace FishNet.Object.Prediction
         public float Position;
         public float Rotation;
         public float Scale;
+        public float TimeRemaining;
 
         public MoveRatesCls(float value)
         {
@@ -247,6 +279,14 @@ namespace FishNet.Object.Prediction
             Position = position;
             Rotation = rotation;
             Scale = scale;
+        }
+
+        public MoveRatesCls(float position, float rotation, float scale, float timeRemaining)
+        {
+            Position = position;
+            Rotation = rotation;
+            Scale = scale;
+            TimeRemaining = timeRemaining;
         }
 
         /// <summary>
@@ -323,6 +363,7 @@ namespace FishNet.Object.Prediction
             Position = UNSET_VALUE;
             Rotation = UNSET_VALUE;
             Scale = UNSET_VALUE;
+            TimeRemaining = UNSET_VALUE;
         }
 
         public void InitializeState() { }
@@ -336,6 +377,7 @@ namespace FishNet.Object.Prediction
         /// </summary>
         public const float INSTANT_VALUE = float.PositiveInfinity;
 
+
         /// <summary>
         /// Moves transform to target values.
         /// </summary>
@@ -347,6 +389,7 @@ namespace FishNet.Object.Prediction
                 return;
 
             MoveRatesCls.MoveLocalToTarget(movingTransform, goalProperties.Position, Position, goalProperties.Rotation, Rotation, goalProperties.LocalScale, Scale, delta);
+            TimeRemaining -= delta;
         }
 
         /// <summary>
@@ -355,57 +398,95 @@ namespace FishNet.Object.Prediction
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MoveLocalToTarget(Transform movingTransform, Vector3 posGoal, float posRate, Quaternion rotGoal, float rotRate, Vector3 scaleGoal, float scaleRate, float delta)
         {
+            MoveLocalToTarget(movingTransform, TransformPropertiesFlag.Everything, posGoal, posRate, rotGoal, rotRate, scaleGoal, scaleRate, delta);
+        }
+
+        /// <summary>
+        /// Moves transform to target values.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void MoveLocalToTarget(Transform movingTransform, TransformPropertiesFlag movedProperties, Vector3 posGoal, float posRate, Quaternion rotGoal, float rotRate, Vector3 scaleGoal, float scaleRate, float delta)
+        {
             Transform t = movingTransform;
             float rate;
 
-            rate = posRate;
-            if (rate == MoveRatesCls.INSTANT_VALUE)
-                t.localPosition = posGoal;
-            else
-                t.localPosition = Vector3.MoveTowards(t.localPosition, posGoal, rate * delta);
+            if (movedProperties.FastContains(TransformPropertiesFlag.Position))
+            {
+                rate = posRate;
+                if (rate == MoveRatesCls.INSTANT_VALUE)
+                    t.localPosition = posGoal;
+                else
+                    t.localPosition = Vector3.MoveTowards(t.localPosition, posGoal, rate * delta);
+            }
 
-            rate = rotRate;
-            if (rate == MoveRatesCls.INSTANT_VALUE)
-                t.localRotation = rotGoal;
-            else
-                t.localRotation = Quaternion.RotateTowards(t.localRotation, rotGoal, rate * delta);
+            if (movedProperties.FastContains(TransformPropertiesFlag.Rotation))
+            {
+                rate = rotRate;
+                if (rate == MoveRatesCls.INSTANT_VALUE)
+                    t.localRotation = rotGoal;
+                else
+                    t.localRotation = Quaternion.RotateTowards(t.localRotation, rotGoal, rate * delta);
+            }
 
-            rate = scaleRate;
-            if (rate == MoveRatesCls.INSTANT_VALUE)
-                t.localScale = scaleGoal;
-            else
-                t.localScale = Vector3.MoveTowards(t.localScale, scaleGoal, rate * delta);
+            if (movedProperties.FastContains(TransformPropertiesFlag.LocalScale))
+            {
+                rate = scaleRate;
+                if (rate == MoveRatesCls.INSTANT_VALUE)
+                    t.localScale = scaleGoal;
+                else
+                    t.localScale = Vector3.MoveTowards(t.localScale, scaleGoal, rate * delta);
+            }
         }
 
-                /// <summary>
+        /// <summary>
         /// Moves transform to target values.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MoveWorldToTarget(Transform movingTransform, Vector3 posGoal, float posRate, Quaternion rotGoal, float rotRate, Vector3 scaleGoal, float scaleRate, float delta)
         {
+            MoveWorldToTarget(movingTransform, TransformPropertiesFlag.Everything, posGoal, posRate, rotGoal, rotRate, scaleGoal, scaleRate, delta);
+        }
+
+        /// <summary>
+        /// Moves transform to target values.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void MoveWorldToTarget(Transform movingTransform, TransformPropertiesFlag movedProperties, Vector3 posGoal, float posRate, Quaternion rotGoal, float rotRate, Vector3 scaleGoal, float scaleRate, float delta)
+        {
             Transform t = movingTransform;
             float rate;
 
-            rate = posRate;
-            if (rate == MoveRatesCls.INSTANT_VALUE)
-                t.position = posGoal;
-            else if (rate == MoveRatesCls.UNSET_VALUE) { }
-            else
-                t.position = Vector3.MoveTowards(t.position, posGoal, rate * delta);
+            if (movedProperties.FastContains(TransformPropertiesFlag.Position))
+            {
+                rate = posRate;
+                if (rate == MoveRatesCls.INSTANT_VALUE)
+                    t.position = posGoal;
+                else if (rate == MoveRatesCls.UNSET_VALUE) { }
+                else
+                    t.position = Vector3.MoveTowards(t.position, posGoal, rate * delta);
+            }
 
-            rate = rotRate;
-            if (rate == MoveRatesCls.INSTANT_VALUE)
-                t.rotation = rotGoal;
-            else if (rate == MoveRatesCls.UNSET_VALUE) { }
-            else
-                t.rotation = Quaternion.RotateTowards(t.rotation, rotGoal, rate * delta);
+            //Debug.Log($"StartX {start.x.ToString("0.00")}. End {t.position.x.ToString("0.00")}. Rate {posRate}. Delta {delta}");
 
-            rate = scaleRate;
-            if (rate == MoveRatesCls.INSTANT_VALUE)
-                t.localScale = scaleGoal;
-            else if (rate == MoveRatesCls.UNSET_VALUE) { }
-            else
-                t.localScale = Vector3.MoveTowards(t.localScale, scaleGoal, rate * delta);
+            if (movedProperties.FastContains(TransformPropertiesFlag.Rotation))
+            {
+                rate = rotRate;
+                if (rate == MoveRatesCls.INSTANT_VALUE)
+                    t.rotation = rotGoal;
+                else if (rate == MoveRatesCls.UNSET_VALUE) { }
+                else
+                    t.rotation = Quaternion.RotateTowards(t.rotation, rotGoal, rate * delta);
+            }
+
+            if (movedProperties.FastContains(TransformPropertiesFlag.LocalScale))
+            {
+                rate = scaleRate;
+                if (rate == MoveRatesCls.INSTANT_VALUE)
+                    t.localScale = scaleGoal;
+                else if (rate == MoveRatesCls.UNSET_VALUE) { }
+                else
+                    t.localScale = Vector3.MoveTowards(t.localScale, scaleGoal, rate * delta);
+            }
         }
 
     }

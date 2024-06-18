@@ -1,15 +1,17 @@
+using UnityEngine;
+
 namespace FishNet.Component.Prediction
 {
-
-    public sealed class NetworkTrigger : NetworkCollider
+    public sealed class NetworkCollision : NetworkCollider
     {
-#if PREDICTION_V2
+#if !PREDICTION_1
         protected override void Awake()
         {
-            base.IsTrigger = true;
+            base.IsTrigger = false;
             base.Awake();
         }
 #endif
+
     }
 
 }

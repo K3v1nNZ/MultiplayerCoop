@@ -67,6 +67,12 @@ namespace FishNet.Object
 #pragma warning restore CS0414
         #endregion
 
+        #region Consts.
+        /// <summary>
+        /// Maximum number of allowed added NetworkBehaviours.
+        /// </summary>
+        public const byte MAXIMUM_NETWORKBEHAVIOURS = byte.MaxValue;
+        #endregion
         /// <summary>
         /// Outputs data about this NetworkBehaviour to string.
         /// </summary>
@@ -78,7 +84,7 @@ namespace FishNet.Object
 
 
 
-#if !PREDICTION_V2
+#if PREDICTION_1
         /// <summary>
         /// Preinitializes this script for the network.
         /// </summary>
@@ -123,7 +129,7 @@ namespace FishNet.Object
 #endif
         internal void Deinitialize(bool asServer)
         {
-
+            SyncTypes_ResetState(asServer);
         }
 
         /// <summary>
@@ -176,10 +182,10 @@ namespace FishNet.Object
         /// <summary>
         /// Resets this NetworkBehaviour so that it may be added to an object pool.
         /// </summary>
-        public virtual void ResetState()
+        public virtual void ResetState(bool asServer)
         {
-            SyncTypes_ResetState();
-#if PREDICTION_V2
+            SyncTypes_ResetState(asServer);
+#if !PREDICTION_1
             ResetPredictionTicks();
 #endif
             ClearReplicateCache();

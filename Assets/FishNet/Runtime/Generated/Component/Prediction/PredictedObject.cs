@@ -11,7 +11,7 @@ namespace FishNet.Component.Prediction
     [AddComponentMenu("FishNet/Component/PredictedObject")]
     public partial class PredictedObject : NetworkBehaviour
     {
-#if !PREDICTION_V2
+#if PREDICTION_1
         #region Types.
         /// <summary>
         /// How to favor smoothing for predicted objects.
@@ -280,7 +280,7 @@ namespace FishNet.Component.Prediction
             /* If host then initialize owner smoother.
              * Host will use owner smoothing settings for more
              * accurate results. */
-            if (base.IsHostInitialized)
+            if (base.IsHostStarted)
                 InitializeSmoother(true);
 
             UpdateRigidbodiesCount(true);

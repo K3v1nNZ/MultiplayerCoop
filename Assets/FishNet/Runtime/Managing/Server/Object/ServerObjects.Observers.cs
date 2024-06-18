@@ -64,13 +64,14 @@ namespace FishNet.Managing.Server
 
             /* Try to iterate all timed observers every half a second.
             * This value will increase as there's more observers or timed conditions. */
-            double timeMultiplier = 1d + (float)((base.NetworkManager.ServerManager.Clients.Count * 0.005d) + (_timedNetworkObservers.Count * 0.0005d));
-            double completionTime = (0.5d * timeMultiplier);
+            float timeMultiplier = 1f + (float)((base.NetworkManager.ServerManager.Clients.Count * 0.005f) + (_timedNetworkObservers.Count * 0.0005f));
+            //Check cap this way for readability.
+            float completionTime = Mathf.Min((0.5f * timeMultiplier), base.NetworkManager.ObserverManager.MaximumTimedObserversDuration);
             uint completionTicks = base.NetworkManager.TimeManager.TimeToTicks(completionTime, TickRounding.RoundUp);
             /* Iterations will be the number of objects
              * to iterate to be have completed all objects by
              * the end of completionTicks. */
-            int iterations = Mathf.CeilToInt((float)networkObserversCount / (float)completionTicks);
+            int iterations = Mathf.CeilToInt((float)networkObserversCount / completionTicks);
             if (iterations > _timedNetworkObservers.Count)
                 iterations = _timedNetworkObservers.Count;
 
@@ -381,11 +382,7 @@ namespace FishNet.Managing.Server
                 return;
             _writer.Reset();
 
-            /* When not using a timed rebuild such as this connections must have
-             * hashgrid data rebuilt immediately. */
-            //            if (!timedOnly)
             conn.UpdateHashGridPositions(!timedOnly);
-
             //If observer state changed then write changes.
             ObserverStateChange osc = nob.RebuildObservers(conn, timedOnly);
             if (osc == ObserverStateChange.Added)
@@ -414,11 +411,7 @@ namespace FishNet.Managing.Server
             if (osc == ObserverStateChange.Added)
                 nob.OnSpawnServer(conn);
 
-            /* If there is change then also rebuild on any runtime children.
-             * This is to ensure runtime children have visibility updated
-             * in relation to parent. 
-             *
-             * If here there is change. */
+            /* If there is change then also rebuild recursive networkObjects. */
             foreach (NetworkBehaviour item in nob.RuntimeChildNetworkBehaviours)
                 RebuildObservers(item.NetworkObject, conn, timedOnly);
         }

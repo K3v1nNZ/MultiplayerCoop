@@ -1,4 +1,6 @@
+using System.Linq;
 using FishNet.Connection;
+using FishNet.Managing.Logging;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Game.Player;
@@ -8,30 +10,56 @@ namespace Game.Networking
 {
     public class SpawnerManager : NetworkBehaviour
     {
+        public static SpawnerManager Instance;
         [SerializeField] private Transform[] spawnPoints;
         [SerializeField] private GameObject playerPrefab;
-        private readonly SyncVar<int> _spawnIndex = new(0);
+        private readonly SyncDictionary<NetworkConnection, PlayerController> _playersConnected = new();
+        private bool _spawnedAll;
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(this);
+            }
+        }
 
         public override void OnStartClient()
         {
-            SpawnPlayerServerRpc(base.LocalConnection);
+            WaitForSpawn(base.LocalConnection);
+        }
+
+        [Server(Logging = LoggingType.Off)]
+        private void Update()
+        {
+            if (!_spawnedAll && _playersConnected.Count == ServerManager.Clients.Count)
+            {
+                for (int i = 0; i < _playersConnected.Count; i++)
+                {
+                    GameObject playerObject = Instantiate(playerPrefab, spawnPoints[i].position, Quaternion.identity);
+                    PlayerController playerController = playerObject.GetComponent<PlayerController>();
+                    ServerManager.Spawn(playerObject, _playersConnected.Keys.ToArray()[i]);
+                    _playersConnected[_playersConnected.Keys.ToArray()[i]] = playerController;
+                }
+                _spawnedAll = true;
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnPlayerServerRpc(NetworkConnection player)
+        private void WaitForSpawn(NetworkConnection player)
         {
-            GameObject playerObject = Instantiate(playerPrefab, spawnPoints[_spawnIndex.Value].position, Quaternion.identity);
-            PlayerController playerController = playerObject.GetComponent<PlayerController>();
-            playerController.playerRole = _spawnIndex.Value switch
-            {
-                0 => PlayerController.PlayerRole.Assassin,
-                1 => PlayerController.PlayerRole.Informant,
-                2 => PlayerController.PlayerRole.Infiltrator,
-                3 => PlayerController.PlayerRole.Hacker,
-                _ => playerController.playerRole
-            };
-            _spawnIndex.Value++;
-            ServerManager.Spawn(playerObject, player);
+            _playersConnected.Add(player, null);
+        }
+        
+        [ServerRpc(RequireOwnership = false)]
+        public void GiveRole(NetworkConnection player)
+        {
+            PlayerController playerController = _playersConnected[player];
+            playerController.SetRoleData(player, (PlayerController.PlayerRole) _playersConnected.Keys.ToList().IndexOf(player));
         }
     }
 }
