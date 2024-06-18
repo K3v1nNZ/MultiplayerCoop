@@ -46,6 +46,12 @@ namespace Game.Environment
         {
             _audioSource = GetComponent<AudioSource>();
         }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void UnlockDoor()
+        {
+            IsLocked.Value = false;
+        }
         
         [ServerRpc(RequireOwnership = false)]
         private void ServerToggleDoor(PlayerController interactor)

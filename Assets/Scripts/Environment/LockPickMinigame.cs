@@ -74,7 +74,7 @@ namespace Game.Environment
                 }
                 else
                 {
-                    door.IsLocked.Value = false;
+                    door.UnlockDoor();
                     PlayerController.Instance.canMove = true;
                     PlayerController.Instance.canInteract = true;
                     Destroy(gameObject);

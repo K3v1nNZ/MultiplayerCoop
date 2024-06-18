@@ -49,8 +49,8 @@ MonoBehaviour:
     constantsFileLocation: Assets\SuperUnityBuild
   _productParameters:
     buildCounter: 35
-    buildVersion: 0.0.1.48
-    versionTemplate: 0.0.1.48
+    buildVersion: 0.0.1.49
+    versionTemplate: 0.0.1.49
     autoGenerate: 0
     syncWithPlayerSettings: 1
   _releaseTypeList:
