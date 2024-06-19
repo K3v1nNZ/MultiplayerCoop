@@ -1,4 +1,5 @@
 using System.Linq;
+using DG.Tweening;
 using FishNet.Connection;
 using FishNet.Managing.Logging;
 using FishNet.Object;
@@ -13,6 +14,7 @@ namespace Game.Networking
         public static SpawnerManager Instance;
         [SerializeField] private Transform[] spawnPoints;
         [SerializeField] private GameObject playerPrefab;
+        [SerializeField] private CanvasGroup waitingForPlayersCanvas;
         private readonly SyncDictionary<NetworkConnection, PlayerController> _playersConnected = new();
         private bool _spawnedAll;
 
@@ -46,9 +48,10 @@ namespace Game.Networking
                     _playersConnected[_playersConnected.Keys.ToArray()[i]] = playerController;
                 }
                 _spawnedAll = true;
+                AllPlayersLoaded();
             }
         }
-
+        
         [ServerRpc(RequireOwnership = false)]
         private void WaitForSpawn(NetworkConnection player)
         {
@@ -60,6 +63,12 @@ namespace Game.Networking
         {
             PlayerController playerController = _playersConnected[player];
             playerController.SetRoleData(player, (PlayerController.PlayerRole) _playersConnected.Keys.ToList().IndexOf(player));
+        }
+
+        [ObserversRpc]
+        private void AllPlayersLoaded()
+        {
+            waitingForPlayersCanvas.DOFade(0f, 0.2f).OnComplete(() => waitingForPlayersCanvas.gameObject.SetActive(false));
         }
     }
 }
