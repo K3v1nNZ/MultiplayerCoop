@@ -17,6 +17,8 @@ namespace Game.Player
         [SerializeField] private float jumpForce;
         [SerializeField] private float gravity;
         [SerializeField] private float mouseSensitivity;
+        [SerializeField] private float viewmodelSwayAmount;
+        [SerializeField] private float viewmodelSwaySprintAmount;
         [SerializeField] private GameObject gunObjectViewmodel;
         [SerializeField] private GameObject thirdPersonGunObject;
         [SerializeField] private GameObject firstPersonAssets;
@@ -36,6 +38,7 @@ namespace Game.Player
         private float _rotationY;
         private float _reloadTime;
         private float _fireRateTime;
+        private float _viewmodelSwayTime;
         private bool _hasRole;
         private Transform _gunBarrelEnd;
         private Transform _gunBarrelEndThirdPerson;
@@ -275,6 +278,18 @@ namespace Game.Player
                 _rotationY = Mathf.Clamp(_rotationY, -90f, 90f);
                 _playerCamera.transform.localRotation = Quaternion.Euler(_rotationY, 0, 0);
                 transform.rotation *= Quaternion.Euler(0, _inputActions.Player.Look.ReadValue<Vector2>().x * mouseSensitivity, 0);
+                
+                if (_moveInput != Vector2.zero)
+                {
+                    _viewmodelSwayTime += Time.deltaTime;
+                    float swayX = Mathf.Sin(_viewmodelSwayTime * (isRunning ? viewmodelSwaySprintAmount : viewmodelSwayAmount)) * 0.01f;
+                    float swayY = Mathf.Sin(_viewmodelSwayTime * (isRunning ? viewmodelSwaySprintAmount : viewmodelSwayAmount) * 2) * 0.01f;
+                    gunObjectViewmodel.transform.localPosition = new Vector3(swayX, swayY, 0);
+                }
+                else
+                {
+                    gunObjectViewmodel.transform.localPosition = Vector3.zero;
+                }
             }
         }
     }

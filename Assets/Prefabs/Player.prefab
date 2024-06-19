@@ -407,6 +407,8 @@ MonoBehaviour:
   jumpForce: 8
   gravity: 20
   mouseSensitivity: 0.1
+  viewmodelSwayAmount: 10
+  viewmodelSwaySprintAmount: 15
   gunObjectViewmodel: {fileID: 274041775}
   thirdPersonGunObject: {fileID: 95249448611860254}
   firstPersonAssets: {fileID: 5646116852629472735}
@@ -718,7 +720,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1068849581629444346
 CanvasRenderer:
