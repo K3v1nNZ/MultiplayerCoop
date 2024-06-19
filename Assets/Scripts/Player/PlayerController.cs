@@ -22,6 +22,7 @@ namespace Game.Player
         [SerializeField] private GameObject firstPersonAssets;
         [SerializeField] private GameObject thirdPersonAssets;
         [SerializeField] private GameObject bulletTrailObject;
+        [SerializeField] private LayerMask shootableLayer;
         [HideInInspector] public bool canMove = true;
         [HideInInspector] public bool canShoot = true;
         [HideInInspector] public bool canInteract = true;
@@ -222,7 +223,7 @@ namespace Game.Player
         private void ShootBullet(Vector3 rayOriginPosition, Vector3 rayOriginForward, Channel channel = Channel.Unreliable)
         {
             Debug.Log("Shot from " + base.Owner.ClientId);
-            if (Physics.Raycast(rayOriginPosition, rayOriginForward, out RaycastHit hit, 100f))
+            if (Physics.Raycast(rayOriginPosition, rayOriginForward, out RaycastHit hit, 100f, shootableLayer))
             {
                 if (hit.collider.gameObject.TryGetComponent(out IShootable shootableObj) && base.IsOwner)
                 {
