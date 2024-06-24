@@ -1,6 +1,7 @@
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using DG.Tweening;
+using Game.MenuUI.MenuPanels;
 using Game.Networking;
 using Steamworks;
 using TMPro;
@@ -13,19 +14,28 @@ namespace Game.MenuUI
 {
     public class MainMenuManager : MonoBehaviour
     {
+        public static MainMenuManager Instance;
+        public MainMenuPanel mainMenuPanel;
+        public PlayMenuPanel playMenuPanel;
+        [SerializeField] private Canvas mainCanvas;
+        [SerializeField] private GameObject modalPanel;
         [SerializeField] private CanvasGroup fadeCanvasGroup;
-        [SerializeField] private CanvasGroup menuCanvasGroup;
-        [SerializeField] private CanvasGroup menuButtonsCanvasGroup;
-        [SerializeField] private CanvasGroup hostJoinCanvasGroup;
         [SerializeField] private TMP_Text profileName;
         [SerializeField] private RawImage profilePicture;
-        
+        [SerializeField] private TMP_Text clockText;
+        private List<MenuPanel> _previousMenuPanels;
+
         private void Awake()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
             fadeCanvasGroup.alpha = 1;
-            menuCanvasGroup.alpha = 1;
-            menuButtonsCanvasGroup.alpha = 1;
-            hostJoinCanvasGroup.alpha = 0;
         }
 
         private void Start()
@@ -33,6 +43,11 @@ namespace Game.MenuUI
             fadeCanvasGroup.DOFade(0f, 1f).SetEase(Ease.Linear);
             profileName.text = SteamClient.Name;
             GetProfilePicture();
+        }
+
+        private void Update()
+        {
+            clockText.text = DateTime.Now.ToString("HH:mm");
         }
 
         private async void GetProfilePicture()
@@ -48,7 +63,7 @@ namespace Game.MenuUI
                 return;
             }
 
-            var avatar = new Texture2D((int)image.Value.Width, (int)image.Value.Height, TextureFormat.ARGB32, false);
+            Texture2D avatar = new((int)image.Value.Width, (int)image.Value.Height, TextureFormat.ARGB32, false);
             avatar.filterMode = FilterMode.Trilinear;
             for (int x = 0; x < image.Value.Width; x++)
             {
@@ -61,22 +76,15 @@ namespace Game.MenuUI
             avatar.Apply();
             profilePicture.texture = avatar;
         }
-
-        #region MainMenuButtons
-        public void PlayButton()
-        {
-            menuButtonsCanvasGroup.interactable = false;
-            menuButtonsCanvasGroup.blocksRaycasts = false;
-            menuButtonsCanvasGroup.DOFade(0f, 0.15f).SetEase(Ease.Linear).OnComplete(() => hostJoinCanvasGroup.interactable = true);
-            hostJoinCanvasGroup.DOFade(1f, 0.15f).SetEase(Ease.Linear).OnComplete(() => hostJoinCanvasGroup.blocksRaycasts = true);
-        }
         
-        public void ShopButton()
+        public void ShowModal(string header, string body, string confirmText, string cancelText, string alternateMessage, Action confirmAction, Action cancelAction = null, Action alternateAction = null)
         {
-            // TODO: Shop menu
-            return;
+            GameObject modalPanelInstance = Instantiate(modalPanel, mainCanvas.transform);
+            ModalPanel modalPanelScript = modalPanelInstance.GetComponent<ModalPanel>();
+            modalPanelScript.ShowModal(header, body, confirmText, cancelText, alternateMessage, confirmAction, cancelAction, alternateAction);
         }
 
+        #region BottomBarButtons
         public void OptionsButton()
         {
             // TODO: Options menu
@@ -85,27 +93,7 @@ namespace Game.MenuUI
 
         public void QuitButton()
         {
-            Application.Quit();
-        }
-        #endregion
-        
-        #region HostJoinButtons
-        public async void HostButton()
-        {
-            await LobbyManager.Instance.CreateLobby();
-        }
-
-        public async void JoinButton()
-        {
-            await LobbyManager.Instance.JoinLobby();
-        }
-
-        public void BackButton()
-        {
-            hostJoinCanvasGroup.interactable = false;
-            hostJoinCanvasGroup.blocksRaycasts = false;
-            hostJoinCanvasGroup.DOFade(0f, 0.15f).SetEase(Ease.Linear).OnComplete(() => menuButtonsCanvasGroup.interactable = true);
-            menuButtonsCanvasGroup.DOFade(1f, 0.15f).SetEase(Ease.Linear).OnComplete(() => menuButtonsCanvasGroup.blocksRaycasts = true);
+            ShowModal("Quit Game", "Are you sure you want to quit?", "Yes", "No", null, Application.Quit);
         }
         #endregion
     }
