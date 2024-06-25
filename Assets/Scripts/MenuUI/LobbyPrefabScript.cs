@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using Game.Networking;
+using Steamworks;
 using Steamworks.Data;
 using TMPro;
 using UnityEngine;
@@ -20,7 +21,12 @@ namespace Game.MenuUI
         
         public async void JoinLobby()
         {
-            await SteamMatchmaking.JoinLobbyAsync(_lobby.Id);
+            MainMenuManager.Instance.lobbyBrowserMenuPanel.CanvasGroupInteractable(false);
+            if (!await LobbyManager.Instance.JoinLobby(_lobby))
+            {
+                MainMenuManager.Instance.ShowModal("Error", "Failed to join lobby.", "Continue", null, null, null);
+                MainMenuManager.Instance.lobbyBrowserMenuPanel.CanvasGroupInteractable(true);
+            }
         }
     }
 }

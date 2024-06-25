@@ -7,12 +7,16 @@ namespace Game.MenuUI.MenuPanels
     {
         public async void HostButton()
         {
-            await LobbyManager.Instance.CreateLobby();
+            CanvasGroupInteractable(false);
+            if (!await LobbyManager.Instance.CreateLobby())
+            {
+                MainMenuManager.Instance.ShowModal("Error", "Failed to create lobby.", "Continue", null, null, null);
+                CanvasGroupInteractable(true);
+            }
         }
 
-        public async void JoinButton()
+        public void JoinButton()
         {
-            //await LobbyManager.Instance.JoinLobby();
             MainMenuManager.Instance.playMenuPanel.HideCanvasGroup();
             MainMenuManager.Instance.lobbyBrowserMenuPanel.ShowCanvasGroup();
         }

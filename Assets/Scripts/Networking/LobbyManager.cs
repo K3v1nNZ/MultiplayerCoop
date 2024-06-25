@@ -182,52 +182,30 @@ namespace Game.Networking
             InstanceFinder.SceneManager.LoadGlobalScenes(data);
         }
         
-        public async Task<bool> JoinLobby()
+        public async Task<bool> JoinLobby(Lobby lobby)
         {
-            Lobby[] lobbies = await SteamMatchmaking.LobbyList.FilterDistanceWorldwide().RequestAsync();
-            if (lobbies is { Length: > 0 })
+            if (lobby.GetData("Version") != Application.version)
             {
-                foreach (Lobby lobby in lobbies)
+                Debug.Log("Version mismatch.");
+                inLobby = false;
+                return false;
+            }
+            if (lobby.MemberCount < maxPlayers)
+            {
+                RoomEnter result = await lobby.Join();
+                if (result == RoomEnter.Success)
                 {
-                    if (lobby.Owner.Id == SteamClient.SteamId)
-                    {
-                        Debug.Log("Cannot join own lobby.");
-                        inLobby = false;
-                        continue;
-                    }
-
-                    if (lobby.GetData("Version") != Application.version)
-                    {
-                        Debug.Log("Version mismatch.");
-                        inLobby = false;
-                        continue;
-                    }
-                    if (lobby.MemberCount < maxPlayers)
-                    {
-                        RoomEnter result = await lobby.Join();
-                        if (result == RoomEnter.Success)
-                        {
-                            InstanceFinder.ClientManager.StartConnection(lobby.Owner.Id.ToString());
-                            return true;
-                        }
-                        else
-                        {
-                            Debug.LogError("Failed to join lobby.");
-                            inLobby = false;
-                            continue;
-                        }
-                    }
+                    InstanceFinder.ClientManager.StartConnection(lobby.Owner.Id.ToString());
+                    return true;
                 }
-                Debug.LogError("No lobbies found.");
-                inLobby = false;
-                return false;
+                else
+                {
+                    Debug.LogError("Failed to join lobby.");
+                    inLobby = false;
+                    return false;
+                }
             }
-            else
-            {
-                Debug.LogError("No lobbies found.");
-                inLobby = false;
-                return false;
-            }
+            return false;
         }
 
         public void LeaveLobby()

@@ -24,7 +24,7 @@ namespace Game.MenuUI
             _canvasGroup.DOFade(0f, 0.15f).SetEase(Ease.Linear).OnComplete(() => CanvasGroupInteractable(false));
         }
         
-        private void CanvasGroupInteractable(bool interactable)
+        public void CanvasGroupInteractable(bool interactable)
         {
             _canvasGroup.interactable = interactable;
             _canvasGroup.blocksRaycasts = interactable;
