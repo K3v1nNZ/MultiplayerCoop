@@ -12,7 +12,9 @@ namespace Game.MenuUI.MenuPanels
 
         public async void JoinButton()
         {
-            await LobbyManager.Instance.JoinLobby();
+            //await LobbyManager.Instance.JoinLobby();
+            MainMenuManager.Instance.playMenuPanel.HideCanvasGroup();
+            MainMenuManager.Instance.lobbyBrowserMenuPanel.ShowCanvasGroup();
         }
 
         public void BackButton()

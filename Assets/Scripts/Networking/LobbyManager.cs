@@ -266,6 +266,7 @@ namespace Game.Networking
             _lobbyOwner = CurrentLobbyId.Owner;
             inLobby = true;
             CurrentLobbyId.SetPrivate();
+            CurrentLobbyId.SetData("OwnerName", SteamClient.Name);
             CurrentLobbyId.SetData("Version", Application.version);
             CurrentLobbyId.SetData("Visibility", "Private");
             return true;

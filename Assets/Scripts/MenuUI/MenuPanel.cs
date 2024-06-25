@@ -7,6 +7,7 @@ namespace Game.MenuUI
     public class MenuPanel : MonoBehaviour
     {
         private CanvasGroup _canvasGroup;
+        [HideInInspector] public bool isPanelShown;
         
         private void Start()
         {
@@ -27,6 +28,7 @@ namespace Game.MenuUI
         {
             _canvasGroup.interactable = interactable;
             _canvasGroup.blocksRaycasts = interactable;
+            isPanelShown = interactable;
         }
     }
 }

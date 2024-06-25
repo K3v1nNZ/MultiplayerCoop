@@ -17,6 +17,7 @@ namespace Game.MenuUI
         public static MainMenuManager Instance;
         public MainMenuPanel mainMenuPanel;
         public PlayMenuPanel playMenuPanel;
+        public LobbyBrowserMenuPanel lobbyBrowserMenuPanel;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private GameObject modalPanel;
         [SerializeField] private CanvasGroup fadeCanvasGroup;
