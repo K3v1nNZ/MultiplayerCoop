@@ -12,6 +12,12 @@ namespace Game.MenuUI
         private void Start()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
+            PanelStart();
+        }
+
+        public virtual void PanelStart()
+        {
+            return;
         }
 
         public void ShowCanvasGroup()

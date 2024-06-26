@@ -18,6 +18,7 @@ namespace Game.MenuUI
         public MainMenuPanel mainMenuPanel;
         public PlayMenuPanel playMenuPanel;
         public LobbyBrowserMenuPanel lobbyBrowserMenuPanel;
+        public OptionsMenuPanel optionsMenuPanel;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private GameObject modalPanel;
         [SerializeField] private CanvasGroup fadeCanvasGroup;
@@ -88,8 +89,8 @@ namespace Game.MenuUI
         #region BottomBarButtons
         public void OptionsButton()
         {
-            // TODO: Options menu
-            return;
+            mainMenuPanel.HideCanvasGroup();
+            optionsMenuPanel.ShowCanvasGroup();
         }
 
         public void QuitButton()
