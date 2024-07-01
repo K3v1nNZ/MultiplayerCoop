@@ -1,19 +1,5 @@
 {
   "dependencies": {
-    "com.deltation.toon-rp": {
-      "version": "https://github.com/Delt06/toon-rp.git?path=Packages/com.deltation.toon-rp#unity-2021-3",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.render-pipelines.core": "12.1.6",
-        "com.unity.shadergraph": "12.1.8",
-        "com.unity.modules.uielements": "1.0.0",
-        "com.unity.mathematics": "1.2.6",
-        "com.unity.burst": "1.8.9",
-        "com.unity.collections": "1.5.1"
-      },
-      "hash": "fc509a97bdc376fb257cb3894179197d5329fc22"
-    },
     "com.github.superunitybuild.buildtool": {
       "version": "7.0.0",
       "depth": 0,
@@ -55,7 +41,7 @@
     },
     "com.unity.collections": {
       "version": "1.5.1",
-      "depth": 1,
+      "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.burst": "1.6.6",
@@ -135,7 +121,7 @@
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.4",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -155,6 +141,17 @@
         "com.unity.ugui": "1.0.0",
         "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
+      }
+    },
+    "com.unity.render-pipelines.universal": {
+      "version": "12.1.14",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1",
+        "com.unity.burst": "1.8.9",
+        "com.unity.render-pipelines.core": "12.1.14",
+        "com.unity.shadergraph": "12.1.14"
       }
     },
     "com.unity.searcher": {
