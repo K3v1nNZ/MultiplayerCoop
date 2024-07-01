@@ -10,6 +10,8 @@ namespace Game.Player
         public int WindowMode;
         public bool VSync;
         public int MsaaSampleCount;
+        public float RenderScale;
+        public int ShadowCascades;
     }
     
     public static class GameLoadSettings
@@ -43,6 +45,8 @@ namespace Game.Player
                 3 => 8,
                 _ => UrpAsset.msaaSampleCount
             };
+            UrpAsset.renderScale = settings.RenderScale;
+            UrpAsset.shadowCascadeCount = settings.ShadowCascades;
         }
 
         private static void GenerateSettings()
@@ -51,7 +55,9 @@ namespace Game.Player
             {
                 WindowMode = 1,
                 VSync = false,
-                MsaaSampleCount = 2
+                MsaaSampleCount = 2,
+                RenderScale = 1f,
+                ShadowCascades = 4
             }));
         }
     }

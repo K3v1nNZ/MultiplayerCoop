@@ -19,6 +19,10 @@ namespace Game.MenuUI.MenuPanels
         [SerializeField] private TMP_Dropdown windowModeDropdown;
         [SerializeField] private Toggle vsyncToggle;
         [SerializeField] private TMP_Dropdown msaaDropdown;
+        [SerializeField] private Slider renderScaleSlider;
+        [SerializeField] private TMP_Text renderScaleText;
+        [SerializeField] private Slider shadowCascadeCountSlider;
+        [SerializeField] private TMP_Text shadowCascadeCountText;
         private GameSettings _gameSettings;
         private bool _settingsChanged;
     
@@ -106,10 +110,16 @@ namespace Game.MenuUI.MenuPanels
                 3 => 8,
                 _ => GameLoadSettings.UrpAsset.msaaSampleCount
             };
+            GameLoadSettings.UrpAsset.renderScale = _gameSettings.RenderScale;
+            GameLoadSettings.UrpAsset.shadowCascadeCount = _gameSettings.ShadowCascades;
 
             windowModeDropdown.value = _gameSettings.WindowMode;
             vsyncToggle.isOn = _gameSettings.VSync;
             msaaDropdown.value = _gameSettings.MsaaSampleCount;
+            renderScaleSlider.value = _gameSettings.RenderScale;
+            renderScaleText.text = _gameSettings.RenderScale.ToString("F2");
+            shadowCascadeCountSlider.value = _gameSettings.ShadowCascades;
+            shadowCascadeCountText.text = _gameSettings.ShadowCascades.ToString();
             _settingsChanged = false;
         }
 
@@ -141,6 +151,20 @@ namespace Game.MenuUI.MenuPanels
         public void MsaaDropdown()
         {
             _gameSettings.MsaaSampleCount = msaaDropdown.value;
+            _settingsChanged = true;
+        }
+        
+        public void RenderScaleSlider()
+        {
+            _gameSettings.RenderScale = renderScaleSlider.value;
+            renderScaleText.text = renderScaleSlider.value.ToString("F2");
+            _settingsChanged = true;
+        }
+        
+        public void ShadowCascadeCountSlider()
+        {
+            _gameSettings.ShadowCascades = (int) shadowCascadeCountSlider.value;
+            shadowCascadeCountText.text = shadowCascadeCountSlider.value.ToString();
             _settingsChanged = true;
         }
     }
