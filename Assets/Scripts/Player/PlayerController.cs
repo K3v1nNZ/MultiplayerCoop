@@ -235,8 +235,16 @@ namespace Game.Player
             }
 
             GameObject bulletTrail = Instantiate(bulletTrailObject, base.IsOwner ? _gunBarrelEnd.position : _gunBarrelEndThirdPerson.position, Quaternion.identity);
-            bulletTrail.transform.LookAt(hit.point);
-            bulletTrail.transform.DOMove(hit.point, 0.075f).SetEase(Ease.Linear).OnComplete(() => Destroy(bulletTrail));
+            if (hit.point != Vector3.zero)
+            {
+                bulletTrail.transform.LookAt(hit.point);
+                bulletTrail.transform.DOMove(hit.point, 0.065f).SetEase(Ease.Linear).OnComplete(() => Destroy(bulletTrail));
+            }
+            else
+            {
+                bulletTrail.transform.LookAt(rayOriginPosition + rayOriginForward * 100f);
+                bulletTrail.transform.DOMove(rayOriginPosition + rayOriginForward * 50f, 0.1f).SetEase(Ease.Linear).OnComplete(() => Destroy(bulletTrail));
+            }
         }
 
         private void Movement()
