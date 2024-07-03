@@ -7,11 +7,13 @@ namespace Game.Player
 {
     public class GameSettings
     {
+        public float FieldOfView;
         public int WindowMode;
         public bool VSync;
         public int MsaaSampleCount;
         public float RenderScale;
         public int ShadowCascades;
+        public float ShadowDistance;
     }
     
     public static class GameLoadSettings
@@ -47,17 +49,20 @@ namespace Game.Player
             };
             UrpAsset.renderScale = settings.RenderScale;
             UrpAsset.shadowCascadeCount = settings.ShadowCascades;
+            UrpAsset.shadowDistance = settings.ShadowDistance;
         }
 
         private static void GenerateSettings()
         {
             File.WriteAllText(Application.persistentDataPath + "/settings.json", JsonUtility.ToJson(new GameSettings
             {
+                FieldOfView = 80,
                 WindowMode = 1,
                 VSync = false,
                 MsaaSampleCount = 2,
                 RenderScale = 1f,
-                ShadowCascades = 4
+                ShadowCascades = 4,
+                ShadowDistance = 100
             }));
         }
     }

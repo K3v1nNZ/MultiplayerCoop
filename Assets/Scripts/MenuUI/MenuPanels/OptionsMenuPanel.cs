@@ -16,6 +16,8 @@ namespace Game.MenuUI.MenuPanels
         [SerializeField] private GameObject aboutPanel;
         [SerializeField] private Button applyButton;
         [Space(10)]
+        [SerializeField] private Slider FieldOfViewSlider;
+        [SerializeField] private TMP_Text FieldOfViewText;
         [SerializeField] private TMP_Dropdown windowModeDropdown;
         [SerializeField] private Toggle vsyncToggle;
         [SerializeField] private TMP_Dropdown msaaDropdown;
@@ -23,6 +25,8 @@ namespace Game.MenuUI.MenuPanels
         [SerializeField] private TMP_Text renderScaleText;
         [SerializeField] private Slider shadowCascadeCountSlider;
         [SerializeField] private TMP_Text shadowCascadeCountText;
+        [SerializeField] private Slider shadowDistanceSlider;
+        [SerializeField] private TMP_Text shadowDistanceText;
         private GameSettings _gameSettings;
         private bool _settingsChanged;
     
@@ -87,7 +91,6 @@ namespace Game.MenuUI.MenuPanels
             LoadSettings();
             _settingsChanged = false;
             MainMenuManager.Instance.ShowModal("Success", "Settings applied.", "Continue", null, null, null);
-            
         }
         
         private void LoadSettings()
@@ -112,7 +115,10 @@ namespace Game.MenuUI.MenuPanels
             };
             GameLoadSettings.UrpAsset.renderScale = _gameSettings.RenderScale;
             GameLoadSettings.UrpAsset.shadowCascadeCount = _gameSettings.ShadowCascades;
+            GameLoadSettings.UrpAsset.shadowDistance = _gameSettings.ShadowDistance;
 
+            FieldOfViewSlider.value = _gameSettings.FieldOfView;
+            FieldOfViewText.text = _gameSettings.FieldOfView.ToString("F0");
             windowModeDropdown.value = _gameSettings.WindowMode;
             vsyncToggle.isOn = _gameSettings.VSync;
             msaaDropdown.value = _gameSettings.MsaaSampleCount;
@@ -120,6 +126,8 @@ namespace Game.MenuUI.MenuPanels
             renderScaleText.text = _gameSettings.RenderScale.ToString("F2");
             shadowCascadeCountSlider.value = _gameSettings.ShadowCascades;
             shadowCascadeCountText.text = _gameSettings.ShadowCascades.ToString();
+            shadowDistanceSlider.value = _gameSettings.ShadowDistance;
+            shadowDistanceText.text = _gameSettings.ShadowDistance.ToString("F0");
             _settingsChanged = false;
         }
 
@@ -134,6 +142,13 @@ namespace Game.MenuUI.MenuPanels
                 MainMenuManager.Instance.optionsMenuPanel.HideCanvasGroup();
                 MainMenuManager.Instance.mainMenuPanel.ShowCanvasGroup();
             }
+        }
+        
+        public void FieldOfViewSlide()
+        {
+            _gameSettings.FieldOfView = FieldOfViewSlider.value;
+            FieldOfViewText.text = FieldOfViewSlider.value.ToString("F0");
+            _settingsChanged = true;
         }
 
         public void WindowModeDropdown()
@@ -165,6 +180,13 @@ namespace Game.MenuUI.MenuPanels
         {
             _gameSettings.ShadowCascades = (int) shadowCascadeCountSlider.value;
             shadowCascadeCountText.text = shadowCascadeCountSlider.value.ToString();
+            _settingsChanged = true;
+        }
+
+        public void ShadowDistanceSlider()
+        {
+            _gameSettings.ShadowDistance = shadowDistanceSlider.value;
+            shadowDistanceText.text = shadowDistanceSlider.value.ToString("F0");
             _settingsChanged = true;
         }
     }
