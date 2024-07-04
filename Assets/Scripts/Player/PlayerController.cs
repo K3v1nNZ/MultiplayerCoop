@@ -81,9 +81,7 @@ namespace Game.Player
         public void SetRoleData(NetworkConnection conn, PlayerRole role)
         {
             if (!base.IsOwner) return;
-            Debug.LogError("Piss2");
             playerRole = role;
-            Debug.LogError(playerRole);
             switch (playerRole)
             {
                 case PlayerRole.Assassin:
@@ -290,8 +288,8 @@ namespace Game.Player
                 if (_moveInput != Vector2.zero)
                 {
                     _viewmodelSwayTime += Time.deltaTime;
-                    float swayX = Mathf.Sin(_viewmodelSwayTime * (isRunning ? viewmodelSwaySprintAmount : viewmodelSwayAmount)) * 0.01f;
-                    float swayY = Mathf.Sin(_viewmodelSwayTime * (isRunning ? viewmodelSwaySprintAmount : viewmodelSwayAmount) * 2) * 0.01f;
+                    float swayX = Mathf.Sin(_viewmodelSwayTime * viewmodelSwayAmount) * 0.01f;
+                    float swayY = Mathf.Sin(_viewmodelSwayTime * viewmodelSwayAmount * 2) * 0.01f;
                     gunObjectViewmodel.transform.localPosition = new Vector3(swayX, swayY, 0);
                 }
                 else

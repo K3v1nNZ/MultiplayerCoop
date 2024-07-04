@@ -28,7 +28,7 @@ namespace Game.Player
         private void Update()
         {
             SteamUser.VoiceRecord = PlayerInputManager.Instance.PlayerInputActions.Player.VoiceChat.IsPressed();
-            if (SteamUser.HasVoiceData)
+            if (/*SteamUser.HasVoiceData*/PlayerInputManager.Instance.PlayerInputActions.Player.VoiceChat.IsPressed())
             {
                 _compressedVoiceStream.Position = 0;
                 int numBytesWritten = SteamUser.ReadVoiceData(_compressedVoiceStream);
