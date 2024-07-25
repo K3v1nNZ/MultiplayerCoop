@@ -63,7 +63,7 @@ namespace Game.Player
                 RenderScale = 1f,
                 ShadowCascades = 4,
                 ShadowDistance = 100
-            }));
+            }, true));
         }
     }
 }

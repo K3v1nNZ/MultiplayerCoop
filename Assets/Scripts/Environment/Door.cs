@@ -14,6 +14,7 @@ namespace Game.Environment
         [SerializeField] private int pins;
         [SerializeField] private float pinSpeed;
         [SerializeField] private bool startLocked;
+        [SerializeField] private bool usePlayerZ;
         public readonly SyncVar<bool> IsLocked = new(false);
         public GameObject lockPickMiniGame;
         private float _openRotation;
@@ -56,7 +57,18 @@ namespace Game.Environment
         [ServerRpc(RequireOwnership = false)]
         private void ServerToggleDoor(PlayerController interactor)
         {
-            if (interactor.transform.position.x > transform.position.x)
+            if (usePlayerZ)
+            {
+                if (interactor.transform.position.z > transform.position.z)
+                {
+                    _openRotation = parentOpenRotation;
+                }
+                else
+                {
+                    _openRotation = -parentOpenRotation;
+                }
+            }
+            else if (interactor.transform.position.x > transform.position.x)
             {
                 _openRotation = parentOpenRotation;
             }

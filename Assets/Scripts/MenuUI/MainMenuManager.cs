@@ -19,6 +19,7 @@ namespace Game.MenuUI
         public PlayMenuPanel playMenuPanel;
         public LobbyBrowserMenuPanel lobbyBrowserMenuPanel;
         public OptionsMenuPanel optionsMenuPanel;
+        public LoadoutMenuPanel loadoutMenuPanel;
         [SerializeField] private Canvas mainCanvas;
         [SerializeField] private GameObject modalPanel;
         [SerializeField] private CanvasGroup fadeCanvasGroup;

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d6942ecb8df446596fc461fa82c05a3, type: 3}
+  m_Name: LoadoutTestPistolAssassin
+  m_EditorClassIdentifier: 
+  itemID: 1
+  itemName: Tes Pistol Assa
+  itemDescription: 
+  itemIcon: {fileID: 2800000, guid: 2e517adcf25c66447bc6d4570bc19ca4, type: 3}
+  usableRole: 1
+  itemType: 1
+  weapon: {fileID: 11400000, guid: 18a8af3614a0579428acfa2e921b29d2, type: 2}

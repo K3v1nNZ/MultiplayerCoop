@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Game.MenuUI.MenuPanels
 {
     public class MainMenuPanel : MenuPanel
@@ -18,8 +16,8 @@ namespace Game.MenuUI.MenuPanels
 
         public void LoadoutButton()
         {
-            // TODO: Loadout menu
-            return;
+            MainMenuManager.Instance.mainMenuPanel.HideCanvasGroup();
+            MainMenuManager.Instance.loadoutMenuPanel.ShowCanvasGroup();
         }
     }
 }

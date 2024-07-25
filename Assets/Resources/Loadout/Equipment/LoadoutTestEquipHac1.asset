@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e065529fc7ce433d8fc88883a3c45a2e, type: 3}
+  m_Name: LoadoutTestEquipHac1
+  m_EditorClassIdentifier: 
+  itemID: 10
+  itemName: Test equip 1 hac
+  itemDescription: 
+  itemIcon: {fileID: 2800000, guid: 2e517adcf25c66447bc6d4570bc19ca4, type: 3}
+  usableRole: 3
+  itemType: 2
+  equipment: {fileID: 11400000, guid: 35667194fa70d7547aef85392eb4ab30, type: 2}

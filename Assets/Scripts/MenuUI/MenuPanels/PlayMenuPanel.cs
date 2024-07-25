@@ -1,5 +1,4 @@
 using Game.Networking;
-using UnityEngine;
 
 namespace Game.MenuUI.MenuPanels
 {

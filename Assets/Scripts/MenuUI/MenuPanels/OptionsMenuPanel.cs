@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Game.Player;
 using TMPro;
@@ -87,7 +86,7 @@ namespace Game.MenuUI.MenuPanels
 
         public void ApplyButton()
         {
-            File.WriteAllText(Application.persistentDataPath + "/settings.json", JsonUtility.ToJson(_gameSettings));
+            File.WriteAllText(Application.persistentDataPath + "/settings.json", JsonUtility.ToJson(_gameSettings, true));
             LoadSettings();
             _settingsChanged = false;
             MainMenuManager.Instance.ShowModal("Success", "Settings applied.", "Continue", null, null, null);
