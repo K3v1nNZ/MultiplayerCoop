@@ -159,7 +159,11 @@ namespace Game.MenuUI.MenuPanels
             {
                 Destroy(child.gameObject);
             }
-            foreach (LoadoutItemScriptableObject item in Resources.LoadAll<LoadoutItemScriptableObject>("Loadout").ToList().FindAll(x => x.usableRole == _usableRole && x.itemType == _itemType))
+            List<LoadoutItemScriptableObject> loadoutItems = Resources.LoadAll<LoadoutItemScriptableObject>("Loadout")
+                .Where(item => item.usableRole == _usableRole || item.usableRole == LoadoutItemScriptableObject.ItemUsableRole.All)
+                .Where(item => item.itemType == _itemType)
+                .ToList();
+            foreach (LoadoutItemScriptableObject item in loadoutItems)
             {
                 GameObject button = Instantiate(chooseItemButtonPrefab, chooseItemPanelContainer.transform);
                 button.GetComponentInChildren<TMP_Text>().text = item.itemName;
