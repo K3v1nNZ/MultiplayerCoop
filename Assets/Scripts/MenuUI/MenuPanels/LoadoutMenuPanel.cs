@@ -146,6 +146,11 @@ namespace Game.MenuUI.MenuPanels
             _slot = slot;
         }
         
+        public void CloseSelectMenu()
+        {
+            chooseItemPanel.SetActive(false);
+        }
+        
         public void OpenSelectMenu(int itemType)
         {
             _itemType = (LoadoutItemScriptableObject.ItemType)itemType;
