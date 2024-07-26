@@ -1,8 +1,11 @@
+using System.IO;
+using System.Linq;
 using DG.Tweening;
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Transporting;
+using Game.MenuUI.MenuPanels;
 using Game.Networking;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -44,6 +47,7 @@ namespace Game.Player
         private Transform _gunBarrelEndThirdPerson;
         private WeaponScriptableObject _previousWeapon;
         public WeaponScriptableObject currentWeapon;
+        public LoadoutSettings LoadoutSettings;
         public PlayerRole playerRole;
         public enum PlayerRole
         {
@@ -82,24 +86,45 @@ namespace Game.Player
         {
             if (!base.IsOwner) return;
             playerRole = role;
+            string weaponId;
             switch (playerRole)
             {
                 case PlayerRole.Assassin:
                     HUDController.Instance.SetRole("Assassin");
+                    weaponId = LoadoutSettings.AssassinPrimaryWeapon;
                     break;
                 case PlayerRole.Informant:
                     HUDController.Instance.SetRole("Informant");
+                    weaponId = LoadoutSettings.AssassinPrimaryWeapon;
                     break;
                 case PlayerRole.Infiltrator:
                     HUDController.Instance.SetRole("Infiltrator");
+                    weaponId = LoadoutSettings.InfiltratorPrimaryWeapon;
                     break;
                 case PlayerRole.Hacker:
                     HUDController.Instance.SetRole("Hacker");
+                    weaponId = LoadoutSettings.HackerPrimaryWeapon;
                     break;
                 default:
                     HUDController.Instance.SetRole("Unknown");
+                    weaponId = "0";
                     break;
             }
+            currentWeapon = Resources.LoadAll<LoadoutPrimaryScriptableObject>("Loadout").ToList().Find(x => x.itemID.ToString() == weaponId).weapon;
+            currentAmmo = currentWeapon.clipSize;
+            ServerWeaponChange();
+        }
+
+        [ServerRpc]
+        public void SetLoadoutDataServer(LoadoutSettings loadoutSettings)
+        {
+            SetLoadoutDataObserver(loadoutSettings);
+        }
+        
+        [ObserversRpc]
+        private void SetLoadoutDataObserver(LoadoutSettings loadoutSettings)
+        {
+            LoadoutSettings = loadoutSettings;
         }
         
         private void Update()
@@ -107,6 +132,7 @@ namespace Game.Player
             if (!base.IsOwner) return;
             if (!_hasRole && base.IsClientInitialized)
             {
+                SetLoadoutDataServer(JsonUtility.FromJson<LoadoutSettings>(File.ReadAllText(Application.persistentDataPath + "/loadout.json")));
                 SpawnerManager.Instance.GiveRole(base.Owner);
                 _hasRole = true;
             }

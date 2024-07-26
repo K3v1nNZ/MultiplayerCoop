@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d6942ecb8df446596fc461fa82c05a3, type: 3}
-  m_Name: LoadoutTestPistAll
+  m_Name: LoadoutTestPistAll 1
   m_EditorClassIdentifier: 
-  itemID: 19
-  itemName: Test Pistol
+  itemID: 20
+  itemName: Test Pistol 2
   itemDescription: 
   itemIcon: {fileID: 2800000, guid: 2e517adcf25c66447bc6d4570bc19ca4, type: 3}
   usableRole: 0
   itemType: 1
-  weapon: {fileID: 11400000, guid: 18a8af3614a0579428acfa2e921b29d2, type: 2}
+  weapon: {fileID: 11400000, guid: 3439507257649db4aa225da696d68791, type: 2}
