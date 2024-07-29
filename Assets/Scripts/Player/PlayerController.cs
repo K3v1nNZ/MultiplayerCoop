@@ -70,7 +70,6 @@ namespace Game.Player
                 thirdPersonAssets.SetActive(false);
                 firstPersonAssets.transform.parent = _playerCamera;
                 _characterController = GetComponent<CharacterController>();
-                currentAmmo = currentWeapon.clipSize;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
@@ -110,9 +109,9 @@ namespace Game.Player
                     weaponId = "0";
                     break;
             }
-            currentWeapon = Resources.LoadAll<LoadoutPrimaryScriptableObject>("Loadout").ToList().Find(x => x.itemID.ToString() == weaponId).weapon;
-            currentAmmo = currentWeapon.clipSize;
-            ServerWeaponChange();
+            LoadoutPrimaryScriptableObject weapon = Resources.LoadAll<LoadoutPrimaryScriptableObject>("Loadout").ToList().Find(x => x.itemID.ToString() == weaponId);
+            _previousWeapon = currentWeapon;
+            ServerWeaponChange(weapon.itemID.ToString());
         }
 
         [ServerRpc]
@@ -151,14 +150,16 @@ namespace Game.Player
         }
 
         [ServerRpc]
-        private void ServerWeaponChange()
+        private void ServerWeaponChange(string weaponId)
         {
-            WeaponChange();
+            WeaponChange(weaponId);
         }
         
         [ObserversRpc]
-        private void WeaponChange()
+        private void WeaponChange(string weaponId)
         {
+            currentWeapon = Resources.LoadAll<LoadoutPrimaryScriptableObject>("Loadout").ToList().Find(x => x.itemID.ToString() == weaponId).weapon;
+            
             foreach (Transform child in gunObjectViewmodel.transform)
             {
                 Destroy(child.gameObject);
@@ -172,6 +173,7 @@ namespace Game.Player
             GameObject thirdPersonModel = Instantiate(currentWeapon.thirdPersonModel, thirdPersonGunObject.transform);
             _reloadTime = 0;
             _fireRateTime = 0;
+            currentAmmo = currentWeapon.clipSize;
             _gunBarrelEnd = model.transform.Find("Model").Find("BarrelEnd");
             _gunBarrelEndThirdPerson = thirdPersonModel.transform.Find("Model").Find("BarrelEnd");
         }
@@ -194,7 +196,9 @@ namespace Game.Player
             if (_previousWeapon != currentWeapon)
             {
                 _previousWeapon = currentWeapon;
-                ServerWeaponChange();
+                // get the loadoutprimaryscriptableobject of the weapon to get its itemID
+                string weaponId = Resources.LoadAll<LoadoutPrimaryScriptableObject>("Loadout").ToList().Find(x => x.weapon == currentWeapon).itemID.ToString();
+                ServerWeaponChange(weaponId);
             }
             
             if (!canShoot) return;

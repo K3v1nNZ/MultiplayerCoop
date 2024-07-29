@@ -422,7 +422,7 @@ MonoBehaviour:
   canInteract: 1
   isRunning: 0
   currentAmmo: 0
-  currentWeapon: {fileID: 11400000, guid: 18a8af3614a0579428acfa2e921b29d2, type: 2}
+  currentWeapon: {fileID: 0}
   playerRole: 0
 --- !u!114 &1799713752143617175
 MonoBehaviour:
