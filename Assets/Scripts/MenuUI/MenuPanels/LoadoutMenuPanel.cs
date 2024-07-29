@@ -35,10 +35,10 @@ namespace Game.MenuUI.MenuPanels
     
     public class LoadoutMenuPanel : MenuPanel
     {
-        [SerializeField] private GameObject assassinLoadoutPanel;
-        [SerializeField] private GameObject infiltratorLoadoutPanel;
-        [SerializeField] private GameObject hackerLoadoutPanel;
-        [SerializeField] private GameObject chooseItemPanel;
+        [SerializeField] private CanvasGroup assassinLoadoutPanel;
+        [SerializeField] private CanvasGroup infiltratorLoadoutPanel;
+        [SerializeField] private CanvasGroup hackerLoadoutPanel;
+        [SerializeField] private CanvasGroup chooseItemPanel;
         [SerializeField] private GameObject chooseItemPanelContainer;
         [SerializeField] private GameObject chooseItemButtonPrefab;
         private LoadoutSettings _loadoutSettings;
@@ -148,13 +148,17 @@ namespace Game.MenuUI.MenuPanels
         
         public void CloseSelectMenu()
         {
-            chooseItemPanel.SetActive(false);
+            chooseItemPanel.alpha = 0f;
+            chooseItemPanel.interactable = false;
+            chooseItemPanel.blocksRaycasts = false;
         }
         
         public void OpenSelectMenu(int itemType)
         {
             _itemType = (LoadoutItemScriptableObject.ItemType)itemType;
-            chooseItemPanel.SetActive(true);
+            chooseItemPanel.alpha = 1f;
+            chooseItemPanel.interactable = true;
+            chooseItemPanel.blocksRaycasts = true;
             foreach (Transform child in chooseItemPanelContainer.transform)
             {
                 Destroy(child.gameObject);
@@ -170,11 +174,17 @@ namespace Game.MenuUI.MenuPanels
                 button.GetComponentInChildren<RawImage>().texture = item.itemIcon;
                 button.GetComponent<Button>().onClick.AddListener(() => SelectItem(item.itemID));
             }
+            foreach (AspectRatioFitter aspectRatioFitter in chooseItemPanelContainer.GetComponentsInChildren<AspectRatioFitter>())
+            {
+                aspectRatioFitter.aspectRatio = (float) aspectRatioFitter.GetComponent<RawImage>().texture.width / aspectRatioFitter.GetComponent<RawImage>().texture.height;
+            }
         }
 
         private void SelectItem(int itemID)
         {
-            chooseItemPanel.SetActive(false);
+            chooseItemPanel.alpha = 0f;
+            chooseItemPanel.interactable = false;
+            chooseItemPanel.blocksRaycasts = false;
             LoadoutItemScriptableObject item = GetItem(itemID.ToString());
             switch (_itemType)
             {
@@ -321,23 +331,47 @@ namespace Game.MenuUI.MenuPanels
         
         public void AssassinButton()
         {
-            assassinLoadoutPanel.SetActive(true);
-            infiltratorLoadoutPanel.SetActive(false);
-            hackerLoadoutPanel.SetActive(false);
+            assassinLoadoutPanel.alpha = 1f;
+            assassinLoadoutPanel.interactable = true;
+            assassinLoadoutPanel.blocksRaycasts = true;
+
+            infiltratorLoadoutPanel.alpha = 0f;
+            infiltratorLoadoutPanel.interactable = false;
+            infiltratorLoadoutPanel.blocksRaycasts = false;
+            
+            hackerLoadoutPanel.alpha = 0f;
+            hackerLoadoutPanel.interactable = false;
+            hackerLoadoutPanel.blocksRaycasts = false;
         }
         
         public void InfiltratorButton()
         {
-            assassinLoadoutPanel.SetActive(false);
-            infiltratorLoadoutPanel.SetActive(true);
-            hackerLoadoutPanel.SetActive(false);
+            assassinLoadoutPanel.alpha = 0f;
+            assassinLoadoutPanel.interactable = false;
+            assassinLoadoutPanel.blocksRaycasts = false;
+            
+            infiltratorLoadoutPanel.alpha = 1f;
+            infiltratorLoadoutPanel.interactable = true;
+            infiltratorLoadoutPanel.blocksRaycasts = true;
+            
+            hackerLoadoutPanel.alpha = 0f;
+            hackerLoadoutPanel.interactable = false;
+            hackerLoadoutPanel.blocksRaycasts = false;
         }
         
         public void HackerButton()
         {
-            assassinLoadoutPanel.SetActive(false);
-            infiltratorLoadoutPanel.SetActive(false);
-            hackerLoadoutPanel.SetActive(true);
+            assassinLoadoutPanel.alpha = 0f;
+            assassinLoadoutPanel.interactable = false;
+            assassinLoadoutPanel.blocksRaycasts = false;
+            
+            infiltratorLoadoutPanel.alpha = 0f;
+            infiltratorLoadoutPanel.interactable = false;
+            infiltratorLoadoutPanel.blocksRaycasts = false;
+            
+            hackerLoadoutPanel.alpha = 1f;
+            hackerLoadoutPanel.interactable = true;
+            hackerLoadoutPanel.blocksRaycasts = true;
         }
         
         public void BackButton()
