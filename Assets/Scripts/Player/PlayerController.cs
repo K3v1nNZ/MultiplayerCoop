@@ -5,6 +5,7 @@ using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Transporting;
+using Game.Environment;
 using Game.MenuUI.MenuPanels;
 using Game.Networking;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace Game.Player
         [SerializeField] private float gravity;
         [SerializeField] private float mouseSensitivity;
         [SerializeField] private float viewmodelSwayAmount;
-        [SerializeField] private float viewmodelSwaySprintAmount;
+        [SerializeField] private float informantMouseSensitivity;
         [SerializeField] private GameObject gunObjectViewmodel;
         [SerializeField] private GameObject thirdPersonGunObject;
         [SerializeField] private GameObject firstPersonAssets;
@@ -43,6 +44,8 @@ namespace Game.Player
         private float _fireRateTime;
         private float _viewmodelSwayTime;
         private bool _hasRole;
+        private bool _isInformant;
+        private int _informantScreen = 1;
         private Transform _gunBarrelEnd;
         private Transform _gunBarrelEndThirdPerson;
         private WeaponScriptableObject _previousWeapon;
@@ -94,7 +97,9 @@ namespace Game.Player
                     break;
                 case PlayerRole.Informant:
                     HUDController.Instance.SetRole("Informant");
-                    weaponId = LoadoutSettings.AssassinPrimaryWeapon;
+                    InformantSetup();
+                    _isInformant = true;
+                    weaponId = "0";
                     break;
                 case PlayerRole.Infiltrator:
                     HUDController.Instance.SetRole("Infiltrator");
@@ -109,6 +114,7 @@ namespace Game.Player
                     weaponId = "0";
                     break;
             }
+            if (_isInformant) return;
             LoadoutPrimaryScriptableObject weapon = Resources.LoadAll<LoadoutPrimaryScriptableObject>("Loadout").ToList().Find(x => x.itemID.ToString() == weaponId);
             _previousWeapon = currentWeapon;
             ServerWeaponChange(weapon.itemID.ToString());
@@ -125,10 +131,27 @@ namespace Game.Player
         {
             LoadoutSettings = loadoutSettings;
         }
+
+        private void InformantSetup()
+        {
+            _playerCamera.transform.SetParent(InformantBase.Instance.playerCamHolder);
+            _playerCamera.localPosition = Vector3.zero;
+            InformantBase.Instance.playerCamHolder.localPosition = InformantBase.Instance.mapCamPos.localPosition;
+            InformantBase.Instance.playerCamHolder.localRotation = InformantBase.Instance.mapCamPos.localRotation;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            firstPersonAssets.SetActive(false);
+            thirdPersonAssets.SetActive(false);
+        }
         
         private void Update()
         {
             if (!base.IsOwner) return;
+            if (_isInformant)
+            {
+                InformantMovement();
+                return;
+            }
             if (!_hasRole && base.IsClientInitialized)
             {
                 SetLoadoutDataServer(JsonUtility.FromJson<LoadoutSettings>(File.ReadAllText(Application.persistentDataPath + "/loadout.json")));
@@ -196,7 +219,6 @@ namespace Game.Player
             if (_previousWeapon != currentWeapon)
             {
                 _previousWeapon = currentWeapon;
-                // get the loadoutprimaryscriptableobject of the weapon to get its itemID
                 string weaponId = Resources.LoadAll<LoadoutPrimaryScriptableObject>("Loadout").ToList().Find(x => x.weapon == currentWeapon).itemID.ToString();
                 ServerWeaponChange(weaponId);
             }
@@ -327,6 +349,50 @@ namespace Game.Player
                     gunObjectViewmodel.transform.localPosition = Vector3.zero;
                 }
             }
+        }
+
+        private void InformantMovement()
+        {
+            if (_inputActions.Player.InformantScreenLeft.WasPressedThisFrame())
+            {
+                switch (_informantScreen)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        _informantScreen = 0;
+                        InformantBase.Instance.playerCamHolder.DOLocalMove(InformantBase.Instance.laptopCamPos.localPosition, 0.2f).SetEase(Ease.InOutSine);
+                        InformantBase.Instance.playerCamHolder.DOLocalRotate(InformantBase.Instance.laptopCamPos.localRotation.eulerAngles, 0.2f).SetEase(Ease.InOutSine);
+                        break;
+                    case 2:
+                        _informantScreen = 1;
+                        InformantBase.Instance.playerCamHolder.DOLocalMove(InformantBase.Instance.mapCamPos.localPosition, 0.2f).SetEase(Ease.InOutSine);
+                        InformantBase.Instance.playerCamHolder.DOLocalRotate(InformantBase.Instance.mapCamPos.localRotation.eulerAngles, 0.2f).SetEase(Ease.InOutSine);
+                        break;
+                }
+            }
+            else if (_inputActions.Player.InformantScreenRight.WasPressedThisFrame())
+            {
+                switch (_informantScreen)
+                {
+                    case 0:
+                        _informantScreen = 1;
+                        InformantBase.Instance.playerCamHolder.DOLocalMove(InformantBase.Instance.mapCamPos.localPosition, 0.2f).SetEase(Ease.InOutSine);
+                        InformantBase.Instance.playerCamHolder.DOLocalRotate(InformantBase.Instance.mapCamPos.localRotation.eulerAngles, 0.2f).SetEase(Ease.InOutSine);
+                        break;
+                    case 1:
+                        _informantScreen = 2;
+                        InformantBase.Instance.playerCamHolder.DOLocalMove(InformantBase.Instance.boardCamPos.localPosition, 0.2f).SetEase(Ease.InOutSine);
+                        InformantBase.Instance.playerCamHolder.DOLocalRotate(InformantBase.Instance.boardCamPos.localRotation.eulerAngles, 0.2f).SetEase(Ease.InOutSine);
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+            
+            Vector3 mousePos = _inputActions.Player.MousePosition.ReadValue<Vector2>();
+            Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+            _playerCamera.localRotation = Quaternion.Euler((screenCenter.y - mousePos.y) * informantMouseSensitivity, (screenCenter.x - mousePos.x) * informantMouseSensitivity, 0);
         }
     }
 }

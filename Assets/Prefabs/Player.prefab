@@ -407,8 +407,8 @@ MonoBehaviour:
   jumpForce: 8
   gravity: 20
   mouseSensitivity: 0.1
-  viewmodelSwayAmount: 10
-  viewmodelSwaySprintAmount: 15
+  viewmodelSwayAmount: 1
+  informantMouseSensitivity: 10
   gunObjectViewmodel: {fileID: 274041775}
   thirdPersonGunObject: {fileID: 95249448611860254}
   firstPersonAssets: {fileID: 5646116852629472735}

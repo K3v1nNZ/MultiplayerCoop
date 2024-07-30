@@ -33,6 +33,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "9aa96cde-dcb2-4e67-acd7-2b06cd9519bf",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "0c57ca38-cb61-4e72-b5a6-aa8cb8715c69",
@@ -81,6 +90,24 @@
                     "name": "ItemReload",
                     "type": "Button",
                     "id": "bbfc294a-4a8b-4c4d-9331-2d837fc0a755",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InformantScreenLeft",
+                    "type": "Button",
+                    "id": "02e9e678-9197-4b07-be1b-0dd5351eb01f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InformantScreenRight",
+                    "type": "Button",
+                    "id": "a4fb6699-2cf4-4d8a-b328-51e235e1d9b6",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -327,6 +354,61 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "ItemReload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cae289e7-1987-4bf4-860e-99566bdb05f2",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "InformantScreenLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8b0f9f83-a16a-4e20-964f-6b74527551bc",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "InformantScreenLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1794552e-91df-4514-a6e6-e4bbe3bf8083",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InformantScreenRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3a25a196-7ad0-4871-8b72-fed6a00bc561",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "InformantScreenRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f1c93564-8fb5-47e5-bd34-303523a7c06e",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "MousePosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

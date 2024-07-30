@@ -57,6 +57,15 @@ namespace UnityEngine.InputSystem
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""MousePosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""9aa96cde-dcb2-4e67-acd7-2b06cd9519bf"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""0c57ca38-cb61-4e72-b5a6-aa8cb8715c69"",
@@ -105,6 +114,24 @@ namespace UnityEngine.InputSystem
                     ""name"": ""ItemReload"",
                     ""type"": ""Button"",
                     ""id"": ""bbfc294a-4a8b-4c4d-9331-2d837fc0a755"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InformantScreenLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""02e9e678-9197-4b07-be1b-0dd5351eb01f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InformantScreenRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""a4fb6699-2cf4-4d8a-b328-51e235e1d9b6"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -351,6 +378,61 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""ItemReload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cae289e7-1987-4bf4-860e-99566bdb05f2"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""InformantScreenLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8b0f9f83-a16a-4e20-964f-6b74527551bc"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""InformantScreenLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1794552e-91df-4514-a6e6-e4bbe3bf8083"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InformantScreenRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3a25a196-7ad0-4871-8b72-fed6a00bc561"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""InformantScreenRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f1c93564-8fb5-47e5-bd34-303523a7c06e"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""MousePosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -701,12 +783,15 @@ namespace UnityEngine.InputSystem
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
             m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
             m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
+            m_Player_MousePosition = m_Player.FindAction("MousePosition", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
             m_Player_VoiceChat = m_Player.FindAction("VoiceChat", throwIfNotFound: true);
             m_Player_ItemPrimary = m_Player.FindAction("ItemPrimary", throwIfNotFound: true);
             m_Player_ItemSecondary = m_Player.FindAction("ItemSecondary", throwIfNotFound: true);
             m_Player_ItemReload = m_Player.FindAction("ItemReload", throwIfNotFound: true);
+            m_Player_InformantScreenLeft = m_Player.FindAction("InformantScreenLeft", throwIfNotFound: true);
+            m_Player_InformantScreenRight = m_Player.FindAction("InformantScreenRight", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -782,12 +867,15 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_Move;
         private readonly InputAction m_Player_Sprint;
         private readonly InputAction m_Player_Look;
+        private readonly InputAction m_Player_MousePosition;
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Interact;
         private readonly InputAction m_Player_VoiceChat;
         private readonly InputAction m_Player_ItemPrimary;
         private readonly InputAction m_Player_ItemSecondary;
         private readonly InputAction m_Player_ItemReload;
+        private readonly InputAction m_Player_InformantScreenLeft;
+        private readonly InputAction m_Player_InformantScreenRight;
         public struct PlayerActions
         {
             private @PlayerInputActions m_Wrapper;
@@ -795,12 +883,15 @@ namespace UnityEngine.InputSystem
             public InputAction @Move => m_Wrapper.m_Player_Move;
             public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
             public InputAction @Look => m_Wrapper.m_Player_Look;
+            public InputAction @MousePosition => m_Wrapper.m_Player_MousePosition;
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @Interact => m_Wrapper.m_Player_Interact;
             public InputAction @VoiceChat => m_Wrapper.m_Player_VoiceChat;
             public InputAction @ItemPrimary => m_Wrapper.m_Player_ItemPrimary;
             public InputAction @ItemSecondary => m_Wrapper.m_Player_ItemSecondary;
             public InputAction @ItemReload => m_Wrapper.m_Player_ItemReload;
+            public InputAction @InformantScreenLeft => m_Wrapper.m_Player_InformantScreenLeft;
+            public InputAction @InformantScreenRight => m_Wrapper.m_Player_InformantScreenRight;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -819,6 +910,9 @@ namespace UnityEngine.InputSystem
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
+                @MousePosition.started += instance.OnMousePosition;
+                @MousePosition.performed += instance.OnMousePosition;
+                @MousePosition.canceled += instance.OnMousePosition;
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
@@ -837,6 +931,12 @@ namespace UnityEngine.InputSystem
                 @ItemReload.started += instance.OnItemReload;
                 @ItemReload.performed += instance.OnItemReload;
                 @ItemReload.canceled += instance.OnItemReload;
+                @InformantScreenLeft.started += instance.OnInformantScreenLeft;
+                @InformantScreenLeft.performed += instance.OnInformantScreenLeft;
+                @InformantScreenLeft.canceled += instance.OnInformantScreenLeft;
+                @InformantScreenRight.started += instance.OnInformantScreenRight;
+                @InformantScreenRight.performed += instance.OnInformantScreenRight;
+                @InformantScreenRight.canceled += instance.OnInformantScreenRight;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -850,6 +950,9 @@ namespace UnityEngine.InputSystem
                 @Look.started -= instance.OnLook;
                 @Look.performed -= instance.OnLook;
                 @Look.canceled -= instance.OnLook;
+                @MousePosition.started -= instance.OnMousePosition;
+                @MousePosition.performed -= instance.OnMousePosition;
+                @MousePosition.canceled -= instance.OnMousePosition;
                 @Jump.started -= instance.OnJump;
                 @Jump.performed -= instance.OnJump;
                 @Jump.canceled -= instance.OnJump;
@@ -868,6 +971,12 @@ namespace UnityEngine.InputSystem
                 @ItemReload.started -= instance.OnItemReload;
                 @ItemReload.performed -= instance.OnItemReload;
                 @ItemReload.canceled -= instance.OnItemReload;
+                @InformantScreenLeft.started -= instance.OnInformantScreenLeft;
+                @InformantScreenLeft.performed -= instance.OnInformantScreenLeft;
+                @InformantScreenLeft.canceled -= instance.OnInformantScreenLeft;
+                @InformantScreenRight.started -= instance.OnInformantScreenRight;
+                @InformantScreenRight.performed -= instance.OnInformantScreenRight;
+                @InformantScreenRight.canceled -= instance.OnInformantScreenRight;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1018,12 +1127,15 @@ namespace UnityEngine.InputSystem
             void OnMove(InputAction.CallbackContext context);
             void OnSprint(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
+            void OnMousePosition(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
             void OnVoiceChat(InputAction.CallbackContext context);
             void OnItemPrimary(InputAction.CallbackContext context);
             void OnItemSecondary(InputAction.CallbackContext context);
             void OnItemReload(InputAction.CallbackContext context);
+            void OnInformantScreenLeft(InputAction.CallbackContext context);
+            void OnInformantScreenRight(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {
