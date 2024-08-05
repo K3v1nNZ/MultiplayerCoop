@@ -82,7 +82,7 @@ namespace Game.Environment
                     continue;
                 }
                 
-                RawImage playerImage = new GameObject("Player Icon", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
+                RawImage playerImage = new GameObject($"{player.OwnerId} icon", typeof(RectTransform), typeof(RawImage)).GetComponent<RawImage>();
                 playerImage.transform.SetParent(mapTransform);
                 playerImage.texture = playerIcon;
                 playerImage.rectTransform.sizeDelta = new Vector2(150, 150);
