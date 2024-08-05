@@ -15,7 +15,7 @@ namespace Game.Networking
         [SerializeField] private Transform[] spawnPoints;
         [SerializeField] private GameObject playerPrefab;
         [SerializeField] private CanvasGroup waitingForPlayersCanvas;
-        private readonly SyncDictionary<NetworkConnection, PlayerController> _playersConnected = new();
+        public readonly SyncDictionary<NetworkConnection, PlayerController> _playersConnected = new();
         private bool _spawnedAll;
 
         private void Awake()
