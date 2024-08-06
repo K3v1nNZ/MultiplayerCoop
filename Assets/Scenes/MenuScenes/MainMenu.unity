@@ -15646,6 +15646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxPlayers: 4
+  waitingForConnectionModal: {fileID: 8021529093482907875, guid: 1b0d000960ee6da4c9a10434adcdb8b8, type: 3}
   inLobby: 0
 --- !u!4 &1564756040
 Transform:

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FishNet;
@@ -16,8 +17,9 @@ namespace Game.Networking
     {
         public static LobbyManager Instance;
         [SerializeField] private int maxPlayers;
+        [SerializeField] private GameObject waitingForConnectionModal;
         public Lobby CurrentLobbyId;
-        public bool inLobby;
+        [HideInInspector] public bool inLobby;
         private Friend _lobbyOwner;
         public List<Friend> LobbyMembers;
         // Events
@@ -173,10 +175,18 @@ namespace Game.Networking
             }
         }
 
-        public void StartGame()
+        public async void StartGame()
         {
             if (!CurrentLobbyId.IsOwnedBy(SteamClient.SteamId)) return;
             CurrentLobbyId.SetJoinable(false);
+            if (InstanceFinder.ServerManager.Clients.Count != CurrentLobbyId.MemberCount)
+            {
+                Instantiate(waitingForConnectionModal);
+                while (InstanceFinder.ServerManager.Clients.Count != CurrentLobbyId.MemberCount)
+                {
+                    await Task.Delay(1000);
+                }
+            }
             SceneLoadData data = new(CurrentLobbyId.GetData("Map"));
             data.ReplaceScenes = ReplaceOption.All;
             InstanceFinder.SceneManager.LoadGlobalScenes(data);
