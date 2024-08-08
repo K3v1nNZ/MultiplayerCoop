@@ -21,11 +21,10 @@ namespace Game.Environment
         public SecurityCamera activeCamera;
         [SerializeField] private GameObject cameraButtonContainer;
         [SerializeField] private GameObject cameraButtonPrefab;
-        [SerializeField] private List<SecurityCamera> securityCameras;
-        [Space(10)] 
-        [Header("Map Board")] 
-        [SerializeField] private Transform mapUpper;
-        [SerializeField] private Transform mapLower;
+        private List<SecurityCamera> _securityCameras;
+        [Space(10)] [Header("Map Board")] 
+        private Transform _mapUpper;
+        private Transform _mapLower;
         [SerializeField] private RectTransform mapTransform;
         [SerializeField] private Texture2D playerIcon;
         private Dictionary<RawImage, PlayerController> _playerImages = new();
@@ -42,7 +41,11 @@ namespace Game.Environment
                 Destroy(gameObject);
             }
 
-            foreach (SecurityCamera securityCamera in securityCameras)
+            _securityCameras = MapInfo.Instance.informantBaseSecurityCameras;
+            _mapUpper = MapInfo.Instance.informantBaseMapUpper;
+            _mapLower = MapInfo.Instance.informantBaseMapLower;
+
+            foreach (SecurityCamera securityCamera in _securityCameras)
             {
                 GameObject cameraButton = Instantiate(cameraButtonPrefab, cameraButtonContainer.transform);
                 InformantCameraButton informantCameraButton = cameraButton.GetComponent<InformantCameraButton>();
@@ -101,8 +104,8 @@ namespace Game.Environment
         
         private Vector2 FindNormalizedPosition(Vector3 position)
         {
-            float xPosition = Mathf.InverseLerp(mapLower.position.x, mapUpper.position.x, position.x);
-            float zPosition = Mathf.InverseLerp(mapLower.position.z, mapUpper.position.z, position.z);
+            float xPosition = Mathf.InverseLerp(_mapLower.position.x, _mapUpper.position.x, position.x);
+            float zPosition = Mathf.InverseLerp(_mapLower.position.z, _mapUpper.position.z, position.z);
             return new Vector2(xPosition, zPosition);
         }
     }
