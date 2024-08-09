@@ -6,6 +6,7 @@ namespace Game.Environment
     public class MapInfo : MonoBehaviour
     {
         public static MapInfo Instance;
+        public Transform[] spawnerManagerSpawnPoints;
         public List<SecurityCamera> informantBaseSecurityCameras = new();
         public Transform informantBaseMapUpper;
         public Transform informantBaseMapLower;

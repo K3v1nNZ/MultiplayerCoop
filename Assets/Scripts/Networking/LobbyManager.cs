@@ -187,6 +187,10 @@ namespace Game.Networking
                     await Task.Delay(1000);
                 }
             }
+
+            SceneLoadData loadingData = new("LoadingScene");
+            loadingData.ReplaceScenes = ReplaceOption.All;
+            InstanceFinder.SceneManager.LoadGlobalScenes(loadingData);
             SceneLoadData data = new(CurrentLobbyId.GetData("Map"));
             data.ReplaceScenes = ReplaceOption.All;
             InstanceFinder.SceneManager.LoadGlobalScenes(data);
