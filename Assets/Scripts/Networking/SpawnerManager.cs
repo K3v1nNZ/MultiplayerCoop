@@ -48,6 +48,7 @@ namespace Game.Networking
                     _playersConnected[_playersConnected.Keys.ToArray()[i]] = playerController;
                 }
                 _spawnedAll = true;
+                NpcSpawner.Instance.startSpawning = true;
                 AllPlayersLoaded();
             }
         }

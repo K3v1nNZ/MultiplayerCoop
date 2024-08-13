@@ -49,8 +49,8 @@ MonoBehaviour:
     constantsFileLocation: Assets\SuperUnityBuild
   _productParameters:
     buildCounter: 35
-    buildVersion: 0.0.1.64
-    versionTemplate: 0.0.1.64
+    buildVersion: 0.0.1.66
+    versionTemplate: 0.0.1.66
     autoGenerate: 0
     syncWithPlayerSettings: 1
   _releaseTypeList:
@@ -72,6 +72,8 @@ MonoBehaviour:
         - fileGUID: 0424ac7ffa58a9f41aed856a751e86b6
           sceneActive: 1
         - fileGUID: 9565ee073f11bff40938b537101c1969
+          sceneActive: 1
+        - fileGUID: 0023f1203205111479e31e5baaf5825f
           sceneActive: 1
     - typeName: Shipping
       bundleIdentifier: com.K3v1nNZ.MultiplayerCoop
