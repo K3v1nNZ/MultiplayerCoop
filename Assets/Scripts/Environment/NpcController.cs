@@ -2,6 +2,7 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Game.Environment
 {
@@ -13,11 +14,12 @@ namespace Game.Environment
         [HideInInspector] public NpcClothingItem hatItem;
         [HideInInspector] public NpcClothingItem upperItem;
         [HideInInspector] public NpcClothingItem lowerItem;
+        private NavMeshAgent _navMeshAgent;
         public readonly SyncVar<int> hatClothingItem = new();
         public readonly SyncVar<int> upperClothingItem = new();
         public readonly SyncVar<int> lowerClothingItem = new();
         public readonly SyncVar<bool> target = new();
-        
+
         [Server]
         public void SetupNpc(int hat, int upper, int lower)
         {
@@ -25,13 +27,12 @@ namespace Game.Environment
             upperClothingItem.Value = upper;
             lowerClothingItem.Value = lower;
             
-            InstantiateClothing();
+            InstantiateData();
         }
         
         [ObserversRpc(BufferLast = true)]
-        private void InstantiateClothing()
+        private void InstantiateData()
         {
-            Debug.Log("Neck yourself!");
             hatItem = Resources.LoadAll<NpcClothingItem>("NpcClothingItems").ToList().Find(x => x.id == hatClothingItem.Value);
             upperItem = Resources.LoadAll<NpcClothingItem>("NpcClothingItems").ToList().Find(x => x.id == upperClothingItem.Value);
             lowerItem = Resources.LoadAll<NpcClothingItem>("NpcClothingItems").ToList().Find(x => x.id == lowerClothingItem.Value);
@@ -39,6 +40,8 @@ namespace Game.Environment
             Instantiate(hatItem.itemPrefab, hatContainer.transform);
             Instantiate(upperItem.itemPrefab, upperContainer.transform);
             Instantiate(lowerItem.itemPrefab, lowerContainer.transform);
+            
+            _navMeshAgent = GetComponent<NavMeshAgent>();
         }
     }
 }

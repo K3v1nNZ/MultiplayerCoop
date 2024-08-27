@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using DG.Tweening;
@@ -8,6 +9,8 @@ using FishNet.Transporting;
 using Game.Environment;
 using Game.MenuUI.MenuPanels;
 using Game.Networking;
+using Steamworks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,6 +26,7 @@ namespace Game.Player
         [SerializeField] private float mouseSensitivity;
         [SerializeField] private float viewmodelSwayAmount;
         [SerializeField] private float informantMouseSensitivity;
+        [SerializeField] private TMP_Text namePlateText;
         [SerializeField] private GameObject gunObjectViewmodel;
         [SerializeField] private GameObject thirdPersonGunObject;
         [SerializeField] private GameObject firstPersonAssets;
@@ -49,6 +53,7 @@ namespace Game.Player
         private Transform _gunBarrelEnd;
         private Transform _gunBarrelEndThirdPerson;
         private WeaponScriptableObject _previousWeapon;
+        public SteamId steamId;
         public WeaponScriptableObject currentWeapon;
         public LoadoutSettings LoadoutSettings;
         public PlayerRole playerRole;
@@ -65,6 +70,7 @@ namespace Game.Player
             if (base.IsOwner)
             {
                 Instance = this;
+                SetSteamId(SteamClient.SteamId.Value.ToString());
                 _inputActions = PlayerInputManager.Instance.PlayerInputActions;
                 _playerCamera = Camera.main.transform.parent;
                 _playerCamera.transform.SetParent(transform);
@@ -81,6 +87,15 @@ namespace Game.Player
                 firstPersonAssets.SetActive(false);
                 thirdPersonAssets.SetActive(true);
             }
+        }
+
+        [ObserversRpc(ExcludeOwner = false, BufferLast = true)]
+        private void SetSteamId(string address)
+        {
+            steamId = new SteamId { Value = ulong.Parse(address) };
+            if (base.IsOwner) return;
+            string username = new Friend(steamId).Name;
+            namePlateText.text = username;
         }
 
         [TargetRpc]
