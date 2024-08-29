@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Game.Player
 {
-    public class PlayerLobbyController : NetworkBehaviour
+    public class PlayerVoiceController : NetworkBehaviour
     {
         private AudioSource _audioSource;
         private MemoryStream _compressedVoiceStream = new();
