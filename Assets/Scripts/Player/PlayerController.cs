@@ -70,7 +70,6 @@ namespace Game.Player
             if (base.IsOwner)
             {
                 Instance = this;
-                SetSteamId(SteamClient.SteamId.Value.ToString());
                 _inputActions = PlayerInputManager.Instance.PlayerInputActions;
                 _playerCamera = Camera.main.transform.parent;
                 _playerCamera.transform.SetParent(transform);
@@ -81,6 +80,7 @@ namespace Game.Player
                 _characterController = GetComponent<CharacterController>();
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                SetSteamIdServer(SteamClient.SteamId.Value.ToString());
             }
             else
             {
@@ -89,6 +89,12 @@ namespace Game.Player
             }
         }
 
+        [ServerRpc]
+        private void SetSteamIdServer(string address)
+        {
+            SetSteamId(address);
+        }
+        
         [ObserversRpc(ExcludeOwner = false, BufferLast = true)]
         private void SetSteamId(string address)
         {
