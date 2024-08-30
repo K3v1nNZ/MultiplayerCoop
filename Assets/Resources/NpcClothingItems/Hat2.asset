@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Hat2
   m_EditorClassIdentifier: 
   itemName: Hatty
+  itemDescription: Grey hat
   id: 3
   itemPrefab: {fileID: 2198589060657290037, guid: a3c13e1ffe3920f439f9c14316d7cbf2, type: 3}
   clothingType: 0

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Upper2
   m_EditorClassIdentifier: 
   itemName: Upperry
+  itemDescription: Grey shirt
   id: 4
   itemPrefab: {fileID: 3005155275261511081, guid: 9fe6322c9aeae134ebca40f06b8c6103, type: 3}
   clothingType: 1

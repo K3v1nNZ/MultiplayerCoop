@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Upper1
   m_EditorClassIdentifier: 
   itemName: Upperr
+  itemDescription: White shirt
   id: 1
   itemPrefab: {fileID: 3005155275261511081, guid: 7f441ff9b661e9e458b6c2768c6eabc9, type: 3}
   clothingType: 1

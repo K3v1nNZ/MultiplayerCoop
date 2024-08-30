@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Lower1
   m_EditorClassIdentifier: 
   itemName: Lowerr
+  itemDescription: White pants
   id: 2
   itemPrefab: {fileID: 5617189926095626349, guid: 0d492361250aea448897381e0935a35d, type: 3}
   clothingType: 2

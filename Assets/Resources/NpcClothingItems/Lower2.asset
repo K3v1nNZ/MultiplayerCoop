@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Lower2
   m_EditorClassIdentifier: 
   itemName: Lowerry
+  itemDescription: Grey pants
   id: 5
   itemPrefab: {fileID: 5617189926095626349, guid: a649fd2747e7a8d4aa63d0273b46f6f0, type: 3}
   clothingType: 2

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Hat1
   m_EditorClassIdentifier: 
   itemName: Hatt
+  itemDescription: White hat
   id: 0
   itemPrefab: {fileID: 2198589060657290037, guid: 8dd5ecd253f06d84888368ec2b5a48e5, type: 3}
   clothingType: 0

@@ -242,7 +242,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -545,7 +545,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -716,6 +716,7 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 1799713752143617174}
   - {fileID: 5520202279264949221}
+  - {fileID: 5388928379440137862}
   <SerializedRootNetworkBehaviour>k__BackingField: {fileID: 0}
   <NestedRootNetworkBehaviours>k__BackingField: []
   SerializedTransformProperties:
@@ -856,7 +857,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: This is a sentence which needs to be medium length.
+  m_text: Find evidence to assist the informant with finding the suspect and neutralise
+    them.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 51c11d8d7c9962841b3b68f8af3d24dd, type: 2}
   m_sharedMaterial: {fileID: -70239859173397770, guid: 51c11d8d7c9962841b3b68f8af3d24dd, type: 2}
@@ -866,7 +868,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -883,7 +885,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 39.5
+  m_fontSize: 30
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -971,9 +973,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e9cb447737244d48318ca51ef3052a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 1799713752143617175}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 1799713752143617175}
 --- !u!82 &5337424713341524604
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1401,7 +1403,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

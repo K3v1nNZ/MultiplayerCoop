@@ -12,13 +12,15 @@ namespace Game.Networking
         [SerializeField] private GameObject npcPrefab;
         [SerializeField] private List<Transform> npcSpawnPoints;
         [SerializeField] private List<Transform> targetNpcSpawnPoints;
+        public GameObject winScreen;
+        public GameObject loseScreen;
+        public NpcController targetNpcCont;
         private List<NpcClothingItem> _npcClothingItems = new();
         private List<NpcClothingItem> _npcHatItems = new();
         private List<NpcClothingItem> _npcUpperItems = new();
         private List<NpcClothingItem> _npcLowerItems = new();
         [HideInInspector] public bool startSpawning;
         
-
         private void Awake()
         {
             if (Instance == null)
@@ -67,6 +69,7 @@ namespace Game.Networking
             ServerManager.Spawn(targetNpc);
             targetNpcController.target.Value = true;
             targetNpcController.SetupNpc(_npcHatItems[Random.Range(0, _npcHatItems.Count)].id, _npcUpperItems[Random.Range(0, _npcUpperItems.Count)].id, _npcLowerItems[Random.Range(0, _npcLowerItems.Count)].id);
+            targetNpcCont = targetNpcController;
         }
     }
 }
