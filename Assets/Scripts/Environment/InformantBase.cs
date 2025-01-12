@@ -60,7 +60,7 @@ namespace Game.Environment
             {
                 return;
             }
-            if (PlayerController.Instance.playerRole == PlayerController.PlayerRole.Assassin && !_mapSetup && InstanceFinder.ClientManager.Clients.Count == SpawnerManager.Instance._playersConnected.Count)
+            if (PlayerController.Instance.playerRole == PlayerController.PlayerRole.Informant && !_mapSetup && InstanceFinder.ClientManager.Clients.Count == SpawnerManager.Instance._playersConnected.Count)
             {
                 _mapSetup = true;
                 MapSetup();
